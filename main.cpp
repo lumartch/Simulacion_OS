@@ -1,9 +1,9 @@
 #include <iostream>
+#include <interfaz.h>
 
 using namespace std;
 
-int main()
-{
-    cout << "Hello world!" << endl;
+int main() {
+    new Interfaz;
     return 0;
-}
+    }

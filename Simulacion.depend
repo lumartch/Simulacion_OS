@@ -1,0 +1,24 @@
+# depslib dependency file v1.0
+1548174485 source:/home/lumartch/OneDrive/CUCEI/S-SO/Simulacion/main.cpp
+	<iostream>
+	<interfaz.h>
+
+1548343726 /home/lumartch/OneDrive/CUCEI/S-SO/Simulacion//interfaz.h
+	<iostream>
+	<cstdio>
+	<string>
+	<queue>
+	<regex>
+	<ncurses.h>
+
+1548345577 source:/home/lumartch/OneDrive/CUCEI/S-SO/Simulacion/interfaz.cpp
+	"interfaz.h"
+
+1548343726 /home/lumartch/OneDrive/CUCEI/S-SO/Simulacion/interfaz.h
+	<iostream>
+	<cstdio>
+	<string>
+	<queue>
+	<regex>
+	<ncurses.h>
+

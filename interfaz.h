@@ -25,10 +25,16 @@ class Interfaz {
 
     private:
         int cantLotes;
+        int loteActual;
+        int lotesPendientes;
         int tiempoTotal;
+        int tiempoTranscurrido;
+        int tiempoRestante;
         void proceso();
         void contador();
         void pausa();
+        void pausaProceso();
+        void limpiarTablaProceso();
         bool checkNumero(const string &cadena);
 
     };

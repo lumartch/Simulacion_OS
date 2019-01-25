@@ -22,3 +22,26 @@
 	<regex>
 	<ncurses.h>
 
+1548451484 source:/home/lumartch/Simulacion_OS/interfaz.cpp
+	"interfaz.h"
+
+1548451467 /home/lumartch/Simulacion_OS/interfaz.h
+	<iostream>
+	<cstdio>
+	<string>
+	<queue>
+	<regex>
+	<ncurses.h>
+
+1548448273 source:/home/lumartch/Simulacion_OS/main.cpp
+	<iostream>
+	<interfaz.h>
+
+1548451467 /home/lumartch/Simulacion_OS//interfaz.h
+	<iostream>
+	<cstdio>
+	<string>
+	<queue>
+	<regex>
+	<ncurses.h>
+

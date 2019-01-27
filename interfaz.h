@@ -8,11 +8,10 @@
 #endif // WIN_32
 
 #include <iostream>
-#include <cstdio>
 #include <string>
 #include <queue>
 #include <regex>
-#include <ncurses.h>
+#include <unistd.h>
 
 using namespace std;
 
@@ -24,14 +23,14 @@ class Interfaz {
         void procesamientoLotes();
 
     private:
-        int cantLotes;
         int loteActual;
         int lotesPendientes;
         int tiempoTotal;
         int tiempoTranscurrido;
         int tiempoRestante;
-        void proceso();
-        void contador();
+        int procesoActual;
+        int procesoTotal;
+        void agregarTabulacion();
         void pausa();
         void pausaProceso();
         void limpiarTablaProceso();

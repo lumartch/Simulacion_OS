@@ -22,21 +22,21 @@
 	<regex>
 	<ncurses.h>
 
-1548613948 source:/home/lumartch/Simulacion_OS/interfaz.cpp
+1548625781 source:/home/lumartch/Simulacion_OS/interfaz.cpp
 	"interfaz.h"
 
-1548613662 /home/lumartch/Simulacion_OS/interfaz.h
+1548620479 /home/lumartch/Simulacion_OS/interfaz.h
 	<iostream>
 	<string>
 	<queue>
 	<regex>
 	<unistd.h>
 
-1548607770 source:/home/lumartch/Simulacion_OS/main.cpp
+1548620408 source:/home/lumartch/Simulacion_OS/main.cpp
 	<iostream>
 	<interfaz.h>
 
-1548613662 /home/lumartch/Simulacion_OS//interfaz.h
+1548620479 /home/lumartch/Simulacion_OS//interfaz.h
 	<iostream>
 	<string>
 	<queue>

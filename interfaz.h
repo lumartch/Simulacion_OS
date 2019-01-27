@@ -21,7 +21,6 @@ class Interfaz {
         virtual ~Interfaz();
         void menuInicio();
         void procesamientoLotes();
-
     private:
         int loteActual;
         int lotesPendientes;
@@ -30,12 +29,13 @@ class Interfaz {
         int tiempoRestante;
         int procesoActual;
         int procesoTotal;
+        //int separacion;
         void agregarTabulacion();
+        void procesarDatos();
         void pausa();
         void pausaProceso();
         void limpiarTablaProceso();
         bool checkNumero(const string &cadena);
-
     };
 
 #endif // INTERFAZ_H

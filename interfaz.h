@@ -12,6 +12,7 @@
 #include <queue>
 #include <regex>
 #include <unistd.h>
+#include "lote.h"
 
 using namespace std;
 
@@ -21,6 +22,7 @@ class Interfaz {
         virtual ~Interfaz();
         void menuInicio();
     private:
+        queue <Lote>cola;
         int loteActual;
         int lotesPendientes;
         int tiempoTotal;

@@ -22,24 +22,44 @@
 	<regex>
 	<ncurses.h>
 
-1548633101 source:/home/lumartch/Simulacion_OS/interfaz.cpp
+1548633247 source:/home/lumartch/Simulacion_OS/interfaz.cpp
 	"interfaz.h"
 
-1548629896 /home/lumartch/Simulacion_OS/interfaz.h
+1548634562 /home/lumartch/Simulacion_OS/interfaz.h
 	<iostream>
 	<string>
 	<queue>
 	<regex>
 	<unistd.h>
+	"lote.h"
 
 1548628353 source:/home/lumartch/Simulacion_OS/main.cpp
 	<iostream>
 	<interfaz.h>
 
-1548629896 /home/lumartch/Simulacion_OS//interfaz.h
+1548634562 /home/lumartch/Simulacion_OS//interfaz.h
 	<iostream>
 	<string>
 	<queue>
 	<regex>
 	<unistd.h>
+	"lote.h"
+
+1548634551 source:/home/lumartch/Simulacion_OS/proceso.cpp
+	"proceso.h"
+
+1548634381 /home/lumartch/Simulacion_OS/proceso.h
+	<string>
+
+1548634258 source:/home/lumartch/Simulacion_OS/lote.cpp
+	"lote.h"
+
+1548634390 /home/lumartch/Simulacion_OS/lote.h
+	"proceso.h"
+
+1548634390 /home/lumartch/Simulacion_OS//lote.h
+	"proceso.h"
+
+1548634381 /home/lumartch/Simulacion_OS//proceso.h
+	<string>
 

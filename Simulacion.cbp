@@ -36,7 +36,11 @@
 		</Compiler>
 		<Unit filename="interfaz.cpp" />
 		<Unit filename="interfaz.h" />
+		<Unit filename="lote.cpp" />
+		<Unit filename="lote.h" />
 		<Unit filename="main.cpp" />
+		<Unit filename="proceso.cpp" />
+		<Unit filename="proceso.h" />
 		<Extensions>
 			<envvars />
 			<code_completion />

@@ -32,8 +32,8 @@ class Interfaz {
         int procesoTotal;
         void capturarProceso();
         void procesamientoLotes();
-        void agregarTabulacion();
-        void procesarDatos();
+        void agregarTabulacion(int &cant);
+        void procesarDatos(Proceso& p);
         void tiempoEjecucionTotal();
         void pausa();
         void pausaProceso();

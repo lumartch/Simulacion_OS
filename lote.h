@@ -7,7 +7,7 @@ class Lote {
     public:
         Lote();
         virtual ~Lote();
-        Proceso& getProceso(const int pos);
+        Proceso& operator[](const int pos);
         void setProceso(const Proceso&pro, const int pos);
     private:
         Proceso p[3];

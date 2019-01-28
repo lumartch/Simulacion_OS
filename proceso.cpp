@@ -1,9 +1,11 @@
 #include "proceso.h"
 
 Proceso::Proceso() {
-    id = 0;
+    id = -1111;
     programador = "";
-    operacion = "";
+    n1 = 0;
+    n2 = 0;
+    operador = "";
     tiempoEstimado = 0;
 }
 
@@ -19,8 +21,17 @@ void Proceso::setProgramador(const std::string& programador) {
     this->programador = programador;
 }
 
-void Proceso::setOperacion(const std::string& operacion) {
-    this->operacion = operacion;
+void Proceso::setN1(const int& n1) {
+    this->n1 = n1;
+}
+
+void Proceso::setN2(const int& n2) {
+    this->n2 = n2;
+}
+
+
+void Proceso::setOperador(const std::string& operador) {
+    this->operador = operador;
 }
 
 void Proceso::setTiempoEstimado(const int& tiempoEstimado) {
@@ -35,11 +46,25 @@ std::string Proceso::getProgramador() {
     return programador;
 }
 
-std::string Proceso::getOperacion() {
-    return operacion;
+int Proceso::getN1() {
+    return n1;
+}
+
+int Proceso::getN2() {
+    return n2;
+}
+
+std::string Proceso::getOperador() {
+    return operador;
 }
 
 int Proceso::getTiempoEstimado() {
     return tiempoEstimado;
 }
+
+std::string Proceso::getOperacion() {
+    std::string s = std::to_string(n1) + operador + std::to_string(n2);
+    return s;
+}
+
 

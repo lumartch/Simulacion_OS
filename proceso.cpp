@@ -21,11 +21,11 @@ void Proceso::setProgramador(const std::string& programador) {
     this->programador = programador;
 }
 
-void Proceso::setN1(const int& n1) {
+void Proceso::setN1(const float& n1) {
     this->n1 = n1;
 }
 
-void Proceso::setN2(const int& n2) {
+void Proceso::setN2(const float& n2) {
     this->n2 = n2;
 }
 
@@ -46,11 +46,11 @@ std::string Proceso::getProgramador() {
     return programador;
 }
 
-int Proceso::getN1() {
+float Proceso::getN1() {
     return n1;
 }
 
-int Proceso::getN2() {
+float Proceso::getN2() {
     return n2;
 }
 
@@ -63,7 +63,12 @@ int Proceso::getTiempoEstimado() {
 }
 
 std::string Proceso::getOperacion() {
-    std::string s = std::to_string(n1) + operador + std::to_string(n2);
+    std::string s;
+    std::stringstream stream;
+    stream << std::fixed << std::setprecision(2) << n1;
+    stream << " " << operador << " ";
+    stream << std::fixed << std::setprecision(2) << n2;
+    s = stream.str();
     return s;
 }
 

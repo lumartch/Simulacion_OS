@@ -26,7 +26,9 @@ void Interfaz::menuInicio() {
         cout << "+-----------------------------------------------------------------+" << endl;
         cout << "\033[4;44H";
         getline(cin, cadena);
-        if(!checkNumero(cadena)) { break; }
+        if(checkNumInt(cadena)) {
+            break;
+        }
         cout << "+-----------------------------------------------------------------+" << endl;
         cout << "| Ha introducido un número o carácter inválido. Intente de nuevo. |" << endl;
         cout << "+-----------------------------------------------------------------+" << endl;
@@ -41,8 +43,8 @@ void Interfaz::menuInicio() {
         cout << "\033[4;17H" << ++loteActual << endl;
         Lote l = cola.front();
         cola.pop();
-        for(int i = 0; i < 3; i++){
-            if(l[i].getId() != -1111){
+        for(int i = 0; i < 3; i++) {
+            if(l[i].getId() != -1111) {
                 procesoActual++;
                 procesoTotal--;
                 limpiarTablaProceso();
@@ -57,7 +59,7 @@ void Interfaz::menuInicio() {
 }
 
 void Interfaz::capturarProceso() {
-    string str = "", operacion;
+    string str = "", operador;
     Lote auxLote;
     int con = 0;
     for(int i = 0; i < procesoTotal; i++) {
@@ -68,9 +70,9 @@ void Interfaz::capturarProceso() {
         cout << "+-------------------------------+--------------+------------------+" << endl;
         cout << "| Nombre del programador:                                         |" << endl;
         cout << "+-----------------------------------------------------------------+" << endl;
-        cout << "| Primer número:                  Segundo número:                 |" << endl;
-        cout << "+-----------------------------------------------------------------+" << endl;
         cout << "| Operador (+,-,/,*,%):                                           |" << endl;
+        cout << "+-----------------------------------------------------------------+" << endl;
+        cout << "| Primer número:                  Segundo número:                 |" << endl;
         cout << "+-----------------------------------------------------------------+" << endl;
         cout << "| Tiempo máximo estimado(Mayor a 0):                              |" << endl;
         cout << "+-----------------------------------------------------------------+" << endl;
@@ -81,54 +83,87 @@ void Interfaz::capturarProceso() {
         cout << "\033[4;27H";
         getline(cin, str);
         auxProceso.setProgramador(str);
-        // Primero número
-        do{
-            cout << "\033[6;18H";
-            getline(cin, str);
-            if(!checkNumero(str)) { break; }
-            cout << "\033[14;1H";
-            cout << "| Ha introducido un número o carácter inválido. Intente de nuevo. |" << endl;
-            cout << "+-----------------------------------------------------------------+" << endl;
-            pausaProceso();
-            cout << "\033[6;18H                 ";
-            cout << "\033[14;1H                                                                   " << endl;
-            cout << "\033[15;1H                                                                   " << endl;
-        }while(true);
-        auxProceso.setN1(atoi(str.c_str()));
-        // Segundo número
-        do{
-            cout << "\033[6;51H";
-            getline(cin, str);
-            if(!checkNumero(str)) { break; }
-            cout << "\033[14;1H";
-            cout << "| Ha introducido un número o carácter inválido. Intente de nuevo. |" << endl;
-            cout << "+-----------------------------------------------------------------+" << endl;
-            pausaProceso();
-            cout << "\033[6;51H                ";
-            cout << "\033[14;1H                                                                   " << endl;
-            cout << "\033[15;1H                                                                   " << endl;
-        }while(true);
-        auxProceso.setN2(atoi(str.c_str()));
         // Operador
-        do{
-            cout << "\033[8;25H";
+        do {
+            cout << "\033[6;25H";
             getline(cin, str);
-            if(!checkOperador(str)) { break; }
+            if(!checkOperador(str)) {
+                break;
+            }
             cout << "\033[14;1H";
             cout << "| Ha introducido operador o cáracter inválido. Intente de nuevo.  |" << endl;
             cout << "+-----------------------------------------------------------------+" << endl;
             pausaProceso();
-            cout << "\033[8;25H     ";
+            cout << "\033[6;25H                          ";
             cout << "\033[14;1H                                                                   " << endl;
             cout << "\033[15;1H                                                                   " << endl;
-        }while(true);
+        } while(true);
+        operador = str;
         auxProceso.setOperador(str);
+        // Primero número
+        do {
+            cout << "\033[8;18H";
+            getline(cin, str);
+            if(!checkNumero(str)) {
+                break;
+            }
+            cout << "\033[14;1H";
+            cout << "| Ha introducido un número o carácter inválido. Intente de nuevo. |" << endl;
+            cout << "+-----------------------------------------------------------------+" << endl;
+            pausaProceso();
+            cout << "\033[8;18H                 ";
+            cout << "\033[14;1H                                                                   " << endl;
+            cout << "\033[15;1H                                                                   " << endl;
+        } while(true);
+        auxProceso.setN1(atof(str.c_str()));
+        if(operador == "/" or operador == "%") {
+            // Segundo número
+            do {
+                cout << "\033[8;51H";
+                getline(cin, str);
+                if(!checkNumero(str)) {
+                    if(atof(str.c_str()) != 0) {
+                        break;
+                    } else {
+                        cout << "\033[14;1H";
+                        cout << "| El segundo número debe ser distinto de cero. Intente de nuevo.  |" << endl;
+                        cout << "+-----------------------------------------------------------------+" << endl;
+                    }
+                } else {
+                    cout << "\033[14;1H";
+                    cout << "| Ha introducido un número o carácter inválido. Intente de nuevo. |" << endl;
+                    cout << "+-----------------------------------------------------------------+" << endl;
+                }
+                pausaProceso();
+                cout << "\033[8;51H                ";
+                cout << "\033[14;1H                                                                   " << endl;
+                cout << "\033[15;1H                                                                   " << endl;
+            } while(true);
+            auxProceso.setN2(atof(str.c_str()));
+        } else {
+            // Segundo número
+            do {
+                cout << "\033[8;51H";
+                getline(cin, str);
+                if(!checkNumero(str)) {
+                    break;
+                }
+                cout << "\033[14;1H";
+                cout << "| Ha introducido un número o carácter inválido. Intente de nuevo. |" << endl;
+                cout << "+-----------------------------------------------------------------+" << endl;
+                pausaProceso();
+                cout << "\033[8;51H                ";
+                cout << "\033[14;1H                                                                   " << endl;
+                cout << "\033[15;1H                                                                   " << endl;
+            } while(true);
+            auxProceso.setN2(atof(str.c_str()));
+        }
         // Tiempo máxmo estimado
-        do{
+        do {
             cout << "\033[10;38H";
             getline(cin, str);
             if(!checkNumero(str)) {
-                if(atoi(str.c_str()) >= 1){
+                if(atoi(str.c_str()) >= 1) {
                     break;
                 }
             }
@@ -139,31 +174,36 @@ void Interfaz::capturarProceso() {
             cout << "\033[10;38H                           ";
             cout << "\033[14;1H                                                                   " << endl;
             cout << "\033[15;1H                                                                   " << endl;
-        }while(true);
+        } while(true);
         auxProceso.setTiempoEstimado(atoi(str.c_str()));
         // ID del programa
-        do{
+        do {
             cout << "\033[12;19H";
             getline(cin, str);
-            if(!checkId(str)) { break; }
+            if(checkNumInt(str)) {
+                if(!checkId(str)){
+                    break;
+                }
+            }
             cout << "\033[14;1H";
-            cout << "| El ID ingresao ya existe, ingrese uno nuevo.                    |" << endl;
+            cout << "| El ID ingresado ya existe o caracter inválido Intente de nuevo. |" << endl;
             cout << "+-----------------------------------------------------------------+" << endl;
             pausaProceso();
-            cout << "\033[12;19H                                                 ";
+            cout << "\033[12;19H                                               ";
             cout << "\033[14;1H                                                                   " << endl;
             cout << "\033[15;1H                                                                   " << endl;
-        }while(true);
+        } while(true);
         auxProceso.setId(atoi(str.c_str()));
+        listId.push_back(atoi(str.c_str()));
         auxLote.setProceso(auxProceso, con++);
-        if(con == 3){
+        if(con == 3) {
             con = 0;
             cola.push(auxLote);
             Lote l;
             auxLote = l;
         }
     }
-    if(con != 3 and con != 0){
+    if(con != 3 and con != 0) {
         cola.push(auxLote);
     }
 }
@@ -234,21 +274,17 @@ void Interfaz::procesarDatos(Proceso& p) {
     /* Tercer Tabla "Terminados" */
     cout << "\033[" << 8 + procesoActual + loteActual << ";89H" << p.getId() << endl;
     cout << "\033[" << 8 + procesoActual + loteActual << ";96H" << p.getOperacion() << endl;
-    int resultado = 0;
-    if(p.getOperador() == "+"){
+    float resultado = 0;
+    if(p.getOperador() == "+") {
         resultado = p.getN1() + p.getN2();
-    }
-    else if(p.getOperador() == "-"){
+    } else if(p.getOperador() == "-") {
         resultado = p.getN1() - p.getN2();
-    }
-    else if(p.getOperador() == "*"){
+    } else if(p.getOperador() == "*") {
         resultado = p.getN1() * p.getN2();
-    }
-    else if(p.getOperador() == "/"){
+    } else if(p.getOperador() == "/") {
         resultado = p.getN1() / p.getN2();
-    }
-    else{
-        resultado = p.getN1() % p.getN2();
+    } else {
+        resultado = int(p.getN1()) % int(p.getN2());
     }
     cout << "\033[" << 8 + procesoActual + loteActual << ";155H" << resultado << endl;
 }
@@ -282,7 +318,7 @@ void Interfaz::pausa() {
 }
 
 bool Interfaz::checkNumero(const string& cadena) {
-    regex rx("[0-9]+");
+    regex rx("((\\+|-)?[[:digit:]]+)(\\.(([[:digit:]]+)?))?");
     if(!regex_match(cadena, rx)) {
         return true;
     }
@@ -290,8 +326,16 @@ bool Interfaz::checkNumero(const string& cadena) {
 }
 
 bool Interfaz::checkOperador(const string& cadena) {
-    regex rx("[+|-|*|/|%]");
+    regex rx("[+|\\-|*|/|%]");
     if(!regex_match(cadena, rx)) {
+        return true;
+    }
+    return false;
+}
+
+bool Interfaz::checkNumInt(const string& cadena) {
+    regex rx("[0-9]+");
+    if(regex_match(cadena, rx)) {
         return true;
     }
     return false;
@@ -299,18 +343,9 @@ bool Interfaz::checkOperador(const string& cadena) {
 
 
 bool Interfaz::checkId(const string& cadena) {
-    if(!checkNumero(cadena)){
-        return false;
-    }
-    queue <Lote> aux = cola;
-    for(unsigned int i = 0; i < aux.size(); i++){
-        Lote l = aux.front();
-        for(int j = 0; j < 3; j++){
-            if(atoi(cadena.c_str()) == l[j].getId()){
-                return true;
-            }
-        }
-        aux.pop();
+    std::list<int>::iterator it = std::find(listId.begin(), listId.end(), atoi(cadena.c_str()));
+    if(it != listId.end()){
+        return true;
     }
     return false;
 }

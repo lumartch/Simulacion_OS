@@ -22,44 +22,50 @@
 	<regex>
 	<ncurses.h>
 
-1548640395 source:/home/lumartch/Simulacion_OS/interfaz.cpp
+1548650142 source:/home/lumartch/Simulacion_OS/interfaz.cpp
 	"interfaz.h"
 
-1548640318 /home/lumartch/Simulacion_OS/interfaz.h
+1548650136 /home/lumartch/Simulacion_OS/interfaz.h
 	<iostream>
 	<string>
 	<queue>
+	<list>
 	<regex>
 	<unistd.h>
 	"lote.h"
 
-1548628353 source:/home/lumartch/Simulacion_OS/main.cpp
+1548645988 source:/home/lumartch/Simulacion_OS/main.cpp
 	<iostream>
 	<interfaz.h>
 
-1548640318 /home/lumartch/Simulacion_OS//interfaz.h
+1548650136 /home/lumartch/Simulacion_OS//interfaz.h
 	<iostream>
 	<string>
 	<queue>
+	<list>
 	<regex>
 	<unistd.h>
 	"lote.h"
 
-1548641137 source:/home/lumartch/Simulacion_OS/proceso.cpp
+1548648337 source:/home/lumartch/Simulacion_OS/proceso.cpp
 	"proceso.h"
 
-1548641078 /home/lumartch/Simulacion_OS/proceso.h
+1548648229 /home/lumartch/Simulacion_OS/proceso.h
 	<string>
+	<sstream>
+	<iomanip>
 
-1548636138 source:/home/lumartch/Simulacion_OS/lote.cpp
+1548641837 source:/home/lumartch/Simulacion_OS/lote.cpp
 	"lote.h"
 
-1548635986 /home/lumartch/Simulacion_OS/lote.h
+1548641837 /home/lumartch/Simulacion_OS/lote.h
 	"proceso.h"
 
-1548635986 /home/lumartch/Simulacion_OS//lote.h
+1548641837 /home/lumartch/Simulacion_OS//lote.h
 	"proceso.h"
 
-1548641078 /home/lumartch/Simulacion_OS//proceso.h
+1548648229 /home/lumartch/Simulacion_OS//proceso.h
 	<string>
+	<sstream>
+	<iomanip>
 

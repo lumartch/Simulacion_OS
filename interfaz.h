@@ -10,6 +10,7 @@
 #include <iostream>
 #include <string>
 #include <queue>
+#include <list>
 #include <regex>
 #include <unistd.h>
 #include "lote.h"
@@ -22,7 +23,8 @@ class Interfaz {
         virtual ~Interfaz();
         void menuInicio();
     private:
-        queue <Lote>cola;
+        queue<Lote> cola;
+        list<int> listId;
         int loteActual;
         int lotesPendientes;
         int tiempoTotal;
@@ -39,6 +41,7 @@ class Interfaz {
         void pausaProceso();
         void limpiarTablaProceso();
         bool checkNumero(const string &cadena);
+        bool checkNumInt(const string &cadena);
         bool checkOperador(const string& cadena);
         bool checkId(const string&cadena);
     };

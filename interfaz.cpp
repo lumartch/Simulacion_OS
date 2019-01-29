@@ -20,7 +20,7 @@ void Interfaz::menuInicio() {
     do {
         system(CLEAR);
         cout << "+-------------------------------+--------------+------------------+" << endl;
-        cout << "|      Simulación de un OS      | Tiempo Total | 0                |" << endl;
+        cout << "|      Simulación de un OS                                        |" << endl;
         cout << "+-------------------------------+--------------+------------------+" << endl;
         cout << "| Ingrese la cantidad de procesos a crear:                        |" << endl;
         cout << "+-----------------------------------------------------------------+" << endl;
@@ -39,18 +39,33 @@ void Interfaz::menuInicio() {
     system(CLEAR);
     procesamientoLotes();
     while(!cola.empty()) {
+        cout << "\033[2;50H" << ++tiempoTotal << endl;
         cout << "\033[2;27H" << cola.size() - 1 << endl;
         cout << "\033[4;17H" << ++loteActual << endl;
         Lote l = cola.front();
         cola.pop();
+
+        int aux1 = procesoActual;
+        int aux2 = procesoTotal;
+        for(int i = 0; i < 3; i++) {
+            if(l[i].getId() != -1111) {
+                procesoActual++;
+                procesoTotal--;
+                agregarTabulacionLote(l[i], i);
+            }
+        }
+
+        procesoActual = aux1;
+        procesoTotal = aux2;
         for(int i = 0; i < 3; i++) {
             if(l[i].getId() != -1111) {
                 procesoActual++;
                 procesoTotal--;
                 limpiarTablaProceso();
                 sleep(1);
-                agregarTabulacion(i);
+                agregarTabulacionTerminado(i);
                 procesarDatos(l[i]);
+                cout << "\033[2;50H" << ++tiempoTotal << endl;
             }
         }
         sleep(1);
@@ -66,7 +81,7 @@ void Interfaz::capturarProceso() {
         Proceso auxProceso;
         system(CLEAR);
         cout << "+-------------------------------+--------------+------------------+" << endl;
-        cout << "|  Registro de proceso:         | Tiempo Total | 0                |" << endl;
+        cout << "|  Registro de proceso:                                           |" << endl;
         cout << "+-------------------------------+--------------+------------------+" << endl;
         cout << "| Nombre del programador:                                         |" << endl;
         cout << "+-----------------------------------------------------------------+" << endl;
@@ -224,24 +239,13 @@ void Interfaz::procesamientoLotes() {
     cout << "                                      +-----------------+-----------------------------+ " << endl;
 }
 
-void Interfaz::agregarTabulacion(int &cant) {
-    /* Procesados */
-    cout << "\033[" << 6 + procesoActual + loteActual << ";2H                                      " << endl;
-    cout << "\033[" << 6 + procesoActual + loteActual << ";1H|                            |        |"<< endl;
+void Interfaz::agregarTabulacionTerminado(int &cant) {
     /* Terminados */
     cout << "\033[" << 8 + procesoActual + loteActual << ";88H                                                                                             " << endl;
     cout << "\033[" << 8 + procesoActual + loteActual << ";87H|      |                                                          |                           |" << endl;
     if(cola.size() == 0 or (cant + 1 ) == 3) {
-        cout << "\033[" << 7 + procesoActual + loteActual << ";1H+----------------------------+--------+" << endl;
         cout << "\033[" << 9 + procesoActual + loteActual << ";87H+------+----------------------------------------------------------+---------------------------+" << endl;
     } else {
-        /* Procesados */
-        if(procesoActual == 5) {
-            cout << "\033[13;39H"<< "+" << endl;
-            cout << "\033[" << 7 + procesoActual + loteActual << ";1H|----------------------------+--------+" << endl;
-        } else {
-            cout << "\033[" << 7 + procesoActual + loteActual << ";1H+----------------------------+--------|" << endl;
-        }
         /* Terminados */
         if(procesoActual == 3) {
             cout << "\033[" << 9 + procesoActual + loteActual << ";87H+------+----------------------------------------------------------+---------------------------|" << endl;
@@ -250,6 +254,29 @@ void Interfaz::agregarTabulacion(int &cant) {
         }
     }
 }
+
+void Interfaz::agregarTabulacionLote(Proceso& p, int &cant) {
+    /* Procesados */
+    cout << "\033[" << 6 + procesoActual + loteActual << ";2H                                      " << endl;
+    cout << "\033[" << 6 + procesoActual + loteActual << ";1H|                            |        |"<< endl;
+    if(cola.size() == 0 or (cant + 1 ) == 3) {
+        cout << "\033[" << 7 + procesoActual + loteActual << ";1H+----------------------------+--------+" << endl;
+    } else {
+        /* Procesados */
+        if(procesoActual == 5) {
+            cout << "\033[13;39H"<< "+" << endl;
+            cout << "\033[" << 7 + procesoActual + loteActual << ";1H|----------------------------+--------+" << endl;
+        } else {
+            cout << "\033[" << 7 + procesoActual + loteActual << ";1H+----------------------------+--------|" << endl;
+        }
+    }
+    /* Primer tabla "Nombres" */
+    cout << "\033[" << 6 + procesoActual + loteActual << ";3H" << p.getProgramador() << endl;
+    cout << "\033[" << 6 + procesoActual + loteActual << ";32H" << p.getTiempoEstimado() << endl;
+}
+
+
+
 
 void Interfaz::procesarDatos(Proceso& p) {
     tiempoRestante = p.getTiempoEstimado();
@@ -266,12 +293,13 @@ void Interfaz::procesarDatos(Proceso& p) {
     /* Impresión del tiempo transcurrido, tiempo total e incremento del tiempo total */
     //tiempoTotal--;
     while(tiempoRestante >= 0) {
-        //cout << "\033[2;50H" << ++tiempoTotal << endl;
+        cout << "\033[2;50H" << ++tiempoTotal << endl;
         cout << "\033[" << 11 << ";59H" << tiempoTranscurrido++ << endl;
         cout << "\033[" << 12 << ";59H" << tiempoRestante-- << endl;
         sleep(1);
     }
     /* Tercer Tabla "Terminados" */
+    //cout << "\033[2;50H" << ++tiempoTotal << endl;
     cout << "\033[" << 8 + procesoActual + loteActual << ";89H" << p.getId() << endl;
     cout << "\033[" << 8 + procesoActual + loteActual << ";96H" << p.getOperacion() << endl;
     float resultado = 0;
@@ -290,7 +318,10 @@ void Interfaz::procesarDatos(Proceso& p) {
 }
 
 void Interfaz::tiempoEjecucionTotal() {
-
+    while(procesoTotal != 0){
+        cout << "\033[2;50H" << ++tiempoTotal << endl;
+        sleep(1);
+    }
 }
 
 

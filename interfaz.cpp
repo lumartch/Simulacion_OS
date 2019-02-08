@@ -20,7 +20,7 @@ void Interfaz::menuInicio() {
     do {
         system(CLEAR);
         cout << "+-------------------------------+--------------+------------------+" << endl;
-        cout << "|      Simulación de un OS                                        |" << endl;
+        cout << "|      Simulación de un OS        V.01                            |" << endl;
         cout << "+-------------------------------+--------------+------------------+" << endl;
         cout << "| Ingrese la cantidad de procesos a crear:                        |" << endl;
         cout << "+-----------------------------------------------------------------+" << endl;

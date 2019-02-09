@@ -2,11 +2,12 @@
 
 Proceso::Proceso() {
     id = -1111;
-    programador = "";
     n1 = 0;
     n2 = 0;
     operador = "";
     tiempoEstimado = 0;
+    tiempoTranscurrido = 0;
+    tiempoRestante = 0;
 }
 
 Proceso::~Proceso() {
@@ -17,9 +18,6 @@ void Proceso::setId(const int& id) {
     this->id = id;
 }
 
-void Proceso::setProgramador(const std::string& programador) {
-    this->programador = programador;
-}
 
 void Proceso::setN1(const float& n1) {
     this->n1 = n1;
@@ -36,14 +34,27 @@ void Proceso::setOperador(const std::string& operador) {
 
 void Proceso::setTiempoEstimado(const int& tiempoEstimado) {
     this->tiempoEstimado = tiempoEstimado;
+    this->tiempoRestante = tiempoEstimado;
+}
+
+int Proceso::adherirTiempoTranscurrido() {
+    return ++tiempoTranscurrido;
+}
+
+int Proceso::sustraerTiempoRestante() {
+    return --tiempoRestante;
+}
+
+int Proceso::getTiempoTranscurrido() {
+    return tiempoTranscurrido;
+}
+
+int Proceso::getTiempoRestante() {
+    return tiempoRestante;
 }
 
 int Proceso::getId() {
     return id;
-}
-
-std::string Proceso::getProgramador() {
-    return programador;
 }
 
 float Proceso::getN1() {

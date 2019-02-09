@@ -20,7 +20,7 @@ void Interfaz::menuInicio() {
     do {
         system(CLEAR);
         cout << "+-------------------------------+--------------+------------------+" << endl;
-        cout << "|      Simulación de un OS        V.01                            |" << endl;
+        cout << "|      Simulación de un OS        V 1.2                           |" << endl;
         cout << "+-------------------------------+--------------+------------------+" << endl;
         cout << "| Ingrese la cantidad de procesos a crear:                        |" << endl;
         cout << "+-----------------------------------------------------------------+" << endl;
@@ -35,8 +35,8 @@ void Interfaz::menuInicio() {
         pausa();
     } while(true);
     procesoTotal = atoi(cadena.c_str());
-    capturarProceso();
     system(CLEAR);
+    generarProcesos();
     procesamientoLotes();
     while(!cola.empty()) {
         cout << "\033[2;50H" << ++tiempoTotal << endl;
@@ -44,12 +44,18 @@ void Interfaz::menuInicio() {
         cout << "\033[4;17H" << ++loteActual << endl;
         Lote l = cola.front();
         cola.pop();
+        list<Proceso> lista;
         limpiarTabulacionLote();
         for(int i = 0; i < 3; i++) {
             if(l[i].getId() != -1111) {
                 agregarTabulacionLote(l[i], i);
+                lista.push_back(l[i]);
             }
         }
+        /*while(!lista.empty()) {
+            kbhitOpc(kbhit());
+        }*/
+
         for(int i = 0; i < 3; i++) {
             if(l[i].getId() != -1111) {
                 procesoActual++;
@@ -67,153 +73,34 @@ void Interfaz::menuInicio() {
     pausaProceso();
 }
 
-void Interfaz::capturarProceso() {
-    string str = "", operador;
-    Lote auxLote;
-    int con = 0;
+void Interfaz::generarProcesos() {
+    Lote l;
+    int actual = 0;
+    string op[5] = {"+", "-", "*", "/", "%"};
+    srand(time(nullptr));
     for(int i = 0; i < procesoTotal; i++) {
-        Proceso auxProceso;
-        system(CLEAR);
-        cout << "+-------------------------------+--------------+------------------+" << endl;
-        cout << "|  Registro de proceso:                                           |" << endl;
-        cout << "+-------------------------------+--------------+------------------+" << endl;
-        cout << "| Nombre del programador:                                         |" << endl;
-        cout << "+-----------------------------------------------------------------+" << endl;
-        cout << "| Operador (+,-,/,*,%):                                           |" << endl;
-        cout << "+-----------------------------------------------------------------+" << endl;
-        cout << "| Primer número:                  Segundo número:                 |" << endl;
-        cout << "+-----------------------------------------------------------------+" << endl;
-        cout << "| Tiempo máximo estimado(Mayor a 0):                              |" << endl;
-        cout << "+-----------------------------------------------------------------+" << endl;
-        cout << "| ID de programa:                                                 |" << endl;
-        cout << "+-----------------------------------------------------------------+" << endl;
-        cout << "\033[2;25H" << i + 1;
-        // Nombre
-        cout << "\033[4;27H";
-        getline(cin, str);
-        auxProceso.setProgramador(str);
-        // Operador
-        do {
-            cout << "\033[6;25H";
-            getline(cin, str);
-            if(!checkOperador(str)) {
-                break;
-            }
-            cout << "\033[14;1H";
-            cout << "| Ha introducido operador o cáracter inválido. Intente de nuevo.  |" << endl;
-            cout << "+-----------------------------------------------------------------+" << endl;
-            pausaProceso();
-            cout << "\033[6;25H                          ";
-            cout << "\033[14;1H                                                                   " << endl;
-            cout << "\033[15;1H                                                                   " << endl;
-        } while(true);
-        operador = str;
-        auxProceso.setOperador(str);
-        // Primero número
-        do {
-            cout << "\033[8;18H";
-            getline(cin, str);
-            if(!checkNumero(str)) {
-                break;
-            }
-            cout << "\033[14;1H";
-            cout << "| Ha introducido un número o carácter inválido. Intente de nuevo. |" << endl;
-            cout << "+-----------------------------------------------------------------+" << endl;
-            pausaProceso();
-            cout << "\033[8;18H                 ";
-            cout << "\033[14;1H                                                                   " << endl;
-            cout << "\033[15;1H                                                                   " << endl;
-        } while(true);
-        auxProceso.setN1(atof(str.c_str()));
-        if(operador == "/" or operador == "%") {
-            // Segundo número
-            do {
-                cout << "\033[8;51H";
-                getline(cin, str);
-                if(!checkNumero(str)) {
-                    if(atof(str.c_str()) != 0) {
-                        break;
-                    } else {
-                        cout << "\033[14;1H";
-                        cout << "| El segundo número debe ser distinto de cero. Intente de nuevo.  |" << endl;
-                        cout << "+-----------------------------------------------------------------+" << endl;
-                    }
-                } else {
-                    cout << "\033[14;1H";
-                    cout << "| Ha introducido un número o carácter inválido. Intente de nuevo. |" << endl;
-                    cout << "+-----------------------------------------------------------------+" << endl;
-                }
-                pausaProceso();
-                cout << "\033[8;51H                ";
-                cout << "\033[14;1H                                                                   " << endl;
-                cout << "\033[15;1H                                                                   " << endl;
-            } while(true);
-            auxProceso.setN2(atof(str.c_str()));
+        Proceso p;
+        int opTipo = rand() % 5 + 0;
+        p.setId(i + 1);
+        p.setN1(rand() % -2000 + 2000);
+        p.setOperador(op[opTipo]);
+        if(opTipo == 3 or opTipo == 4) {
+            p.setN2(rand() % 1 + 1000);
         } else {
-            // Segundo número
-            do {
-                cout << "\033[8;51H";
-                getline(cin, str);
-                if(!checkNumero(str)) {
-                    break;
-                }
-                cout << "\033[14;1H";
-                cout << "| Ha introducido un número o carácter inválido. Intente de nuevo. |" << endl;
-                cout << "+-----------------------------------------------------------------+" << endl;
-                pausaProceso();
-                cout << "\033[8;51H                ";
-                cout << "\033[14;1H                                                                   " << endl;
-                cout << "\033[15;1H                                                                   " << endl;
-            } while(true);
-            auxProceso.setN2(atof(str.c_str()));
+            p.setN2(rand() % -2000 + 2000);
         }
-        // Tiempo máxmo estimado
-        do {
-            cout << "\033[10;38H";
-            getline(cin, str);
-            if(!checkNumero(str)) {
-                if(atoi(str.c_str()) >= 1) {
-                    break;
-                }
-            }
-            cout << "\033[14;1H";
-            cout << "| El tiempo tiene que representarse con números enteros positivos.|" << endl;
-            cout << "+-----------------------------------------------------------------+" << endl;
-            pausaProceso();
-            cout << "\033[10;38H                           ";
-            cout << "\033[14;1H                                                                   " << endl;
-            cout << "\033[15;1H                                                                   " << endl;
-        } while(true);
-        auxProceso.setTiempoEstimado(atoi(str.c_str()));
-        // ID del programa
-        do {
-            cout << "\033[12;19H";
-            getline(cin, str);
-            if(checkNumInt(str)) {
-                if(!checkId(str)){
-                    break;
-                }
-            }
-            cout << "\033[14;1H";
-            cout << "| El ID ingresado ya existe o caracter inválido Intente de nuevo. |" << endl;
-            cout << "+-----------------------------------------------------------------+" << endl;
-            pausaProceso();
-            cout << "\033[12;19H                                               ";
-            cout << "\033[14;1H                                                                   " << endl;
-            cout << "\033[15;1H                                                                   " << endl;
-        } while(true);
-        auxProceso.setId(atoi(str.c_str()));
-        listId.push_back(atoi(str.c_str()));
-        auxLote.setProceso(auxProceso, con++);
-        if(con == 3) {
-            con = 0;
-            cola.push(auxLote);
-            Lote l;
-            auxLote = l;
+
+        p.setTiempoEstimado(rand() % 7 + 9);
+        l.setProceso(p, actual++);
+        if(actual == 3) {
+            actual = 0;
+            cola.push(l);
+            Lote aux;
+            l = aux;
         }
     }
-    if(con != 3 and con != 0) {
-        cola.push(auxLote);
+    if(actual != 3 and actual != 0) {
+        cola.push(l);
     }
 }
 
@@ -222,12 +109,11 @@ void Interfaz::procesamientoLotes() {
     cout << "| No. Lotes Pendientes  |       | Tiempo Total | 0       |" << endl;
     cout << "+-------------+---------+-------+--------------+---------+" << endl;
     cout << "| Lote actual |         | "<< endl;
-    cout << "+-------------+---------+----+--------+-----------------------------------------------+---------------------------------------------------------------------------------------------+" << endl;
-    cout << "|       Nombre               | Tiempo |                Proceso                        |                                             Terminados                                      |" << endl;
-    cout << "+----------------------------+--------+-----------------+-----------------------------+------+----------------------------------------------------------+---------------------------+" << endl;
-    cout << "                                      | Nombre          |                             | ID   |        Operación                                         |          Resultado        |" << endl;
+    cout << "+----------+--+---------+-------------+-----------------------------------------------+---------------------------------------------------------------------------------------------+" << endl;
+    cout << "|  ID      |  Tiempo estimado         |                Proceso                        |                                             Terminados                                      |" << endl;
+    cout << "+----------+--------------------------+-----------------+-----------------------------+------+----------------------------------------------------------+---------------------------+" << endl;
+    cout << "                                      | ID Programa     |                             | ID   |        Operación                                         |          Resultado        |" << endl;
     cout << "                                      | Operación       |                             +------+----------------------------------------------------------+---------------------------+ "<< endl;
-    cout << "                                      | ID Programa     |                             | " << endl;
     cout << "                                      | T. Transcurrido |                             | " << endl;
     cout << "                                      | T. Restante     |                             | " << endl;
     cout << "                                      +-----------------+-----------------------------+ " << endl;
@@ -252,15 +138,15 @@ void Interfaz::agregarTabulacionTerminado(int &cant) {
 void Interfaz::agregarTabulacionLote(Proceso& p, int &cant) {
     /* Procesados */
     cout << "\033[" << 8 + cant << ";2H                                      " << endl;
-    cout << "\033[" << 8 + cant << ";1H|                            |        |"<< endl;
-    cout << "\033[" << 9 + cant << ";1H+----------------------------+--------+"<< endl;
-    /* Primer tabla "Nombres" */
-    cout << "\033[" << 8 + cant << ";3H" << p.getProgramador() << endl;
+    cout << "\033[" << 8 + cant << ";1H|          |                          |"<< endl;
+    cout << "\033[" << 9 + cant << ";1H+----------+--------------------------+"<< endl;
+    /* Primer tabla  */
+    cout << "\033[" << 8 + cant << ";3H" << p.getId() << endl;
     cout << "\033[" << 8 + cant << ";32H" << p.getTiempoEstimado() << endl;
 }
 
 void Interfaz::limpiarTabulacionLote() {
-    for(int i = 0; i < 4; i++){
+    for(int i = 0; i < 4; i++) {
         cout << "\033[" << 8 + i << ";1H                                      "<< endl;
     }
 }
@@ -269,27 +155,24 @@ void Interfaz::quitarProceso(int& pos) {
     cout << "\033[" << 8 + pos << ";2H                                     " << endl;
 }
 
-
 void Interfaz::procesarDatos(Proceso& p) {
-    tiempoRestante = p.getTiempoEstimado();
-    tiempoTranscurrido = 0;
-
     /* Segunda Tabla "Procesos" */
-    cout << "\033[" << 8 << ";59H" << p.getProgramador() << endl;
+    cout << "\033[" << 8 << ";59H" << p.getId() << endl;
     cout << "\033[" << 9 << ";59H" << p.getOperacion() << endl;
-    cout << "\033[" << 10 << ";59H" << p.getId() << endl;
-    cout << "\033[" << 11 << ";59H" << tiempoTranscurrido << endl;
-    cout << "\033[" << 12 << ";59H" << tiempoRestante << endl;
+    cout << "\033[" << 10 << ";59H" << p.getTiempoRestante() << endl;
+    cout << "\033[" << 11 << ";59H" << p.getTiempoTranscurrido() << endl;
+    cout << "\033[2;50H" << ++tiempoTotal << endl;
+    sleep(1);
     /* Impresión del tiempo transcurrido, tiempo total e incremento del tiempo total */
-    //tiempoTotal--;
-    while(tiempoRestante >= 0) {
+    while(p.getTiempoRestante() > 0) {
         cout << "\033[2;50H" << ++tiempoTotal << endl;
-        cout << "\033[" << 11 << ";59H" << tiempoTranscurrido++ << endl;
-        cout << "\033[" << 12 << ";59H" << tiempoRestante-- << endl;
+        cout << "\033[" << 10 << ";59H    " << endl;
+        cout << "\033[" << 11 << ";59H    " << endl;
+        cout << "\033[" << 10 << ";59H" << p.adherirTiempoTranscurrido() << endl;
+        cout << "\033[" << 11 << ";59H" << p.sustraerTiempoRestante() << endl;
         sleep(1);
     }
     /* Tercer Tabla "Terminados" */
-    //cout << "\033[2;50H" << ++tiempoTotal << endl;
     cout << "\033[" << 8 + procesoActual + loteActual << ";89H" << p.getId() << endl;
     cout << "\033[" << 8 + procesoActual + loteActual << ";96H" << p.getOperacion() << endl;
     float resultado = 0;
@@ -308,15 +191,14 @@ void Interfaz::procesarDatos(Proceso& p) {
 }
 
 void Interfaz::tiempoEjecucionTotal() {
-    while(procesoTotal != 0){
+    while(procesoTotal != 0) {
         cout << "\033[2;50H" << ++tiempoTotal << endl;
         sleep(1);
     }
 }
 
-
 void Interfaz::limpiarTablaProceso() {
-    for(int i = 0; i < 5; i++) {
+    for(int i = 0; i < 4; i++) {
         cout << "\033[" << i + 8 << ";58H                           " << endl;
     }
 }
@@ -338,22 +220,6 @@ void Interfaz::pausa() {
     cin.get();
 }
 
-bool Interfaz::checkNumero(const string& cadena) {
-    regex rx("((\\+|-)?[[:digit:]]+)(\\.(([[:digit:]]+)?))?");
-    if(!regex_match(cadena, rx)) {
-        return true;
-    }
-    return false;
-}
-
-bool Interfaz::checkOperador(const string& cadena) {
-    regex rx("[+|\\-|*|/|%]");
-    if(!regex_match(cadena, rx)) {
-        return true;
-    }
-    return false;
-}
-
 bool Interfaz::checkNumInt(const string& cadena) {
     regex rx("[0-9]+");
     if(regex_match(cadena, rx)) {
@@ -362,12 +228,36 @@ bool Interfaz::checkNumInt(const string& cadena) {
     return false;
 }
 
-
-bool Interfaz::checkId(const string& cadena) {
-    std::list<int>::iterator it = std::find(listId.begin(), listId.end(), atoi(cadena.c_str()));
-    if(it != listId.end()){
-        return true;
+int Interfaz::kbhit(void) {
+    struct termios oldt, newt;
+    int ch;
+    int oldf;
+    tcgetattr(STDIN_FILENO, &oldt);
+    newt = oldt;
+    newt.c_lflag &= ~(ICANON | ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+    oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
+    fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
+    ch = getchar();
+    if(ch != EOF) {
+        ungetc(ch, stdin);
+        return 1;
     }
-    return false;
+    return 0;
 }
 
+void Interfaz::kbhitOpc(int tecla) {
+    if(tecla == 105 or tecla == 73){
+
+    }
+    else if(tecla == 101 or tecla == 69){
+
+    }
+    else if(tecla == 112 or tecla == 80){
+        while(true){
+            if(kbhit() == 99 or kbhit() == 67){
+                break;
+            }
+        }
+    }
+}

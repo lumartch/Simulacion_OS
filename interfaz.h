@@ -8,11 +8,20 @@
 #endif // WIN_32
 
 #include <iostream>
-#include <string>
+/* TDA para los datos generados */
 #include <queue>
 #include <list>
+/* Herramientas para el manejo de interfaz */
+#include <ctime>
+#include <string>
 #include <regex>
 #include <unistd.h>
+/* Librerías necesarias para el funcionamiento de kbhit */
+#include <termios.h>
+#include <cstdlib>
+#include <cstdio>
+#include <fcntl.h>
+/* Tipo de dato creados */
 #include "lote.h"
 
 using namespace std;
@@ -24,7 +33,6 @@ class Interfaz {
         void menuInicio();
     private:
         queue<Lote> cola;
-        list<int> listId;
         int loteActual;
         int lotesPendientes;
         int tiempoTotal;
@@ -32,7 +40,7 @@ class Interfaz {
         int tiempoRestante;
         int procesoActual;
         int procesoTotal;
-        void capturarProceso();
+        void generarProcesos();
         void procesamientoLotes();
         void agregarTabulacionTerminado(int &cant);
         void agregarTabulacionLote(Proceso& p, int &cant);
@@ -43,10 +51,9 @@ class Interfaz {
         void pausa();
         void pausaProceso();
         void limpiarTablaProceso();
-        bool checkNumero(const string &cadena);
         bool checkNumInt(const string &cadena);
-        bool checkOperador(const string& cadena);
-        bool checkId(const string&cadena);
+        int kbhit(void);
+        void kbhitOpc(int tecla);
     };
 
 #endif // INTERFAZ_H

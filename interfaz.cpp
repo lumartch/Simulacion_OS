@@ -59,7 +59,6 @@ void Interfaz::menuInicio() {
             if(index > lista.size() - 1) {
                 index = 0;
             }
-            pausaProceso();
             int res = procesarDatos(index);
             if(res == 1) {
                 procesoActual++;
@@ -99,7 +98,13 @@ void Interfaz::menuInicio() {
         }
         sleep(1);
     }
-    pausaProceso();
+    cout << "\033[15;1H" << endl << endl;
+    cout << "Presione [enter] para continuar...";
+    while(true){
+        if(kbhit() == 10){
+            break;
+        }
+    }
 }
 
 void Interfaz::generarProcesos() {
@@ -109,7 +114,7 @@ void Interfaz::generarProcesos() {
     srand(time(nullptr));
     for(int i = 0; i < procesoTotal; i++) {
         Proceso p;
-        int opTipo = rand() %5 - 1;
+        int opTipo = rand() % 4 - 0;
         p.setId(i + 1);
         p.setN1(rand() % -2000 + 2000);
         p.setOperador(op[opTipo]);
@@ -118,7 +123,7 @@ void Interfaz::generarProcesos() {
         } else {
             p.setN2(rand() % -2000 + 1000);
         }
-        p.setTiempoEstimado(rand() % 7 + 9);
+        p.setTiempoEstimado(rand() % 7 + 11);
         l.setProceso(p, actual++);
         if(actual == 3) {
             actual = 0;
@@ -247,11 +252,7 @@ void Interfaz::limpiarTablaProceso() {
 }
 
 void Interfaz::pausaProceso() {
-    if(procesoActual > 4) {
-        cout << "\033[" << 10 + procesoActual + loteActual << ";1H" << endl;
-    } else {
-        cout << "\033[15;1H" << endl << endl;
-    }
+    cout << "\033[15;1H" << endl << endl;
     cout << "Presione [enter] para continuar...";
     cin.get();
     cout << "\033[15;1H" << endl << endl;
@@ -271,7 +272,7 @@ bool Interfaz::checkNumInt(const string& cadena) {
     return false;
 }
 
-int Interfaz::kbhit() {
+int Interfaz::kbhit(void) {
     struct termios oldt, newt;
     int ch;
     int oldf;
@@ -282,38 +283,25 @@ int Interfaz::kbhit() {
     oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
     fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
     ch = getchar();
-    fflush(stdin);
     if(ch != EOF) {
-        //ungetc(ch, stdin);
+        while (getchar() != EOF);
         return ch;
     }
+    while (getchar() != EOF);
     return 0;
 }
 
 void Interfaz::pausaKbhit() {
-    if(procesoActual > 4) {
-        cout << "\033[" << 10 + procesoActual + loteActual << ";1H                " << endl;
-    } else {
-        cout << "\033[15;1H              " << endl << endl;
-    }
-    cout << "¡Pausa! Presione [c] para continuar..." << endl << endl;
+    cout << "\033[15;1H¡Pausa! Presione [c] para continuar..." << endl;
     int ch = 0;
     while (getchar() != EOF);
     while(true) {
         ch = kbhit();
         if(ch == 99 or ch == 67) {
-            if(procesoActual > 4) {
-                cout << "\033[" << 10 + procesoActual + loteActual << ";1H                                      " << endl;
-            } else {
-                cout << "\033[15;1H                                      " << endl << endl;
-            }
-            cout << "!Continuemos!" << endl << endl;
-
-            if(procesoActual > 4) {
-                cout << "\033[" << 10 + procesoActual + loteActual << ";1H                              " << endl;
-            } else {
-                cout << "\033[15;1H                           " << endl << endl;
-            }
+            cout << "\033[15;1H                                      " << endl;
+            cout << "\033[15;1H¡Continuemos!                        " << endl;
+            sleep(1);
+            cout << "\033[15;1H                                      " << endl;
             break;
         }
     }

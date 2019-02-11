@@ -53,7 +53,7 @@ class Interfaz {
         void pausaProceso();
         void limpiarTablaProceso();
         bool checkNumInt(const string &cadena);
-        int kbhit();
+        int kbhit(void);
         void pausaKbhit();
     };
 

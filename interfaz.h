@@ -10,7 +10,7 @@
 #include <iostream>
 /* TDA para los datos generados */
 #include <queue>
-#include <list>
+#include <vector>
 /* Herramientas para el manejo de interfaz */
 #include <ctime>
 #include <string>
@@ -33,6 +33,7 @@ class Interfaz {
         void menuInicio();
     private:
         queue<Lote> cola;
+        vector<Proceso> lista;
         int loteActual;
         int lotesPendientes;
         int tiempoTotal;
@@ -42,18 +43,18 @@ class Interfaz {
         int procesoTotal;
         void generarProcesos();
         void procesamientoLotes();
-        void agregarTabulacionTerminado(int &cant);
-        void agregarTabulacionLote(Proceso& p, int &cant);
+        void agregarTabulacionTerminado(const int &cant);
+        void agregarTabulacionLote(Proceso& p, const int &cant);
         void limpiarTabulacionLote();
-        void quitarProceso(int &pos);
-        void procesarDatos(Proceso& p);
+        void quitarProceso(const int &pos);
+        int procesarDatos(unsigned int &index);
         void tiempoEjecucionTotal();
         void pausa();
         void pausaProceso();
         void limpiarTablaProceso();
         bool checkNumInt(const string &cadena);
-        int kbhit(void);
-        void kbhitOpc(int tecla);
+        int kbhit();
+        void pausaKbhit();
     };
 
 #endif // INTERFAZ_H

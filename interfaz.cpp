@@ -44,7 +44,6 @@ void Interfaz::menuInicio() {
         cout << "\033[4;17H" << ++loteActual << endl;
         Lote l = cola.front();
         cola.pop();
-        list<Proceso> lista;
         limpiarTabulacionLote();
         for(int i = 0; i < 3; i++) {
             if(l[i].getId() != -1111) {
@@ -52,25 +51,57 @@ void Interfaz::menuInicio() {
                 lista.push_back(l[i]);
             }
         }
-        /*while(!lista.empty()) {
-            kbhitOpc(kbhit());
-        }*/
-
-        for(int i = 0; i < 3; i++) {
-            if(l[i].getId() != -1111) {
+        unsigned int index = 0;
+        int procesados = 0;
+        while(!lista.empty()) {
+            limpiarTablaProceso();
+            sleep(1);
+            int res = procesarDatos(index);
+            if(res == 1) {
                 procesoActual++;
                 procesoTotal--;
-                limpiarTablaProceso();
-                sleep(1);
-                agregarTabulacionTerminado(i);
-                procesarDatos(l[i]);
-                quitarProceso(i);
-                cout << "\033[2;50H" << ++tiempoTotal << endl;
+                quitarProceso(procesados++);
+                agregarTabulacionTerminado(index);
+                cout << "\033[" << 8 + procesoActual + loteActual << ";89H" << lista[index].getId() << endl;
+                cout << "\033[" << 8 + procesoActual + loteActual << ";96H" << lista[index].getOperacion() << endl;
+                cout << "\033[" << 8 + procesoActual + loteActual << ";155HERROR" << endl;
+                lista.erase(lista.begin() + int(index));
+            } else if(res == 2) {
+                procesoActual++;
+                procesoTotal--;
+                quitarProceso(procesados++);
+                agregarTabulacionTerminado(index);
+                /* Tercer Tabla "Terminados" */
+                cout << "\033[" << 8 + procesoActual + loteActual << ";89H" << lista[index].getId() << endl;
+                cout << "\033[" << 8 + procesoActual + loteActual << ";96H" << lista[index].getOperacion() << endl;
+                float resultado = 0;
+                if(lista[index].getOperador() == "+") {
+                    resultado = lista[index].getN1() + lista[index].getN2();
+                } else if(lista[index].getOperador() == "-") {
+                    resultado = lista[index].getN1() - lista[index].getN2();
+                } else if(lista[index].getOperador() == "*") {
+                    resultado = lista[index].getN1() * lista[index].getN2();
+                } else if(lista[index].getOperador() == "/") {
+                    resultado = lista[index].getN1() / lista[index].getN2();
+                } else {
+                    resultado = int(lista[index].getN1()) % int(lista[index].getN2());
+                }
+                cout << "\033[" << 8 + procesoActual + loteActual << ";155H" << resultado << endl;
+                lista.erase(lista.begin() + int(index));
+            } else {
+                index++;
             }
+
+            if(index > lista.size() + 1) {
+                index = 0;
+            }
+            cout << "\033[2;50H" << ++tiempoTotal << endl;
         }
         sleep(1);
     }
     pausaProceso();
+    sleep(10);
+    //getline(cin, cadena);
 }
 
 void Interfaz::generarProcesos() {
@@ -80,16 +111,15 @@ void Interfaz::generarProcesos() {
     srand(time(nullptr));
     for(int i = 0; i < procesoTotal; i++) {
         Proceso p;
-        int opTipo = rand() % 5 + 0;
+        int opTipo = 4;
         p.setId(i + 1);
         p.setN1(rand() % -2000 + 2000);
         p.setOperador(op[opTipo]);
         if(opTipo == 3 or opTipo == 4) {
-            p.setN2(rand() % 1 + 1000);
+            p.setN2(rand() % 1 + 100);
         } else {
-            p.setN2(rand() % -2000 + 2000);
+            p.setN2(rand() % 1 + 200);
         }
-
         p.setTiempoEstimado(rand() % 7 + 9);
         l.setProceso(p, actual++);
         if(actual == 3) {
@@ -119,7 +149,7 @@ void Interfaz::procesamientoLotes() {
     cout << "                                      +-----------------+-----------------------------+ " << endl;
 }
 
-void Interfaz::agregarTabulacionTerminado(int &cant) {
+void Interfaz::agregarTabulacionTerminado(const int &cant) {
     /* Terminados */
     cout << "\033[" << 8 + procesoActual + loteActual << ";88H                                                                                             " << endl;
     cout << "\033[" << 8 + procesoActual + loteActual << ";87H|      |                                                          |                           |" << endl;
@@ -135,7 +165,7 @@ void Interfaz::agregarTabulacionTerminado(int &cant) {
     }
 }
 
-void Interfaz::agregarTabulacionLote(Proceso& p, int &cant) {
+void Interfaz::agregarTabulacionLote(Proceso& p, const int &cant) {
     /* Procesados */
     cout << "\033[" << 8 + cant << ";2H                                      " << endl;
     cout << "\033[" << 8 + cant << ";1H|          |                          |"<< endl;
@@ -151,43 +181,58 @@ void Interfaz::limpiarTabulacionLote() {
     }
 }
 
-void Interfaz::quitarProceso(int& pos) {
+void Interfaz::quitarProceso(const int &pos) {
     cout << "\033[" << 8 + pos << ";2H                                     " << endl;
 }
 
-void Interfaz::procesarDatos(Proceso& p) {
+int Interfaz::procesarDatos(unsigned int &index) {
+    int ch = kbhit();
+    if(ch == 105 or ch == 73) {
+        return 0;
+    } else if(ch == 101 or ch == 69) {
+        return 1;
+    } else if(ch == 112 or ch == 80) {
+        pausaKbhit();
+    } else {
+        ch = 0;
+    }
     /* Segunda Tabla "Procesos" */
-    cout << "\033[" << 8 << ";59H" << p.getId() << endl;
-    cout << "\033[" << 9 << ";59H" << p.getOperacion() << endl;
-    cout << "\033[" << 10 << ";59H" << p.getTiempoRestante() << endl;
-    cout << "\033[" << 11 << ";59H" << p.getTiempoTranscurrido() << endl;
+    cout << "\033[" << 8 << ";59H" << lista[index].getId() << endl;
+    cout << "\033[" << 9 << ";59H" << lista[index].getOperacion() << endl;
+    cout << "\033[" << 10 << ";59H" << lista[index].getTiempoRestante() << endl;
+    cout << "\033[" << 11 << ";59H" << lista[index].getTiempoTranscurrido() << endl;
     cout << "\033[2;50H" << ++tiempoTotal << endl;
     sleep(1);
+    ch = kbhit();
+    if(ch == 105 or ch == 73) {
+        return 0;
+    } else if(ch == 101 or ch == 69) {
+        return 1;
+    } else if(ch == 112 or ch == 80) {
+        pausaKbhit();
+    } else {
+        ch = 0;
+    }
     /* Impresión del tiempo transcurrido, tiempo total e incremento del tiempo total */
-    while(p.getTiempoRestante() > 0) {
+    while(lista[index].getTiempoRestante() > 0) {
+        ch = kbhit();
+        if(ch == 105 or ch == 73) {
+            return 0;
+        } else if(ch == 101 or ch == 69) {
+            return 1;
+        } else if(ch == 112 or ch == 80) {
+            pausaKbhit();
+        } else {
+            ch = 0;
+        }
         cout << "\033[2;50H" << ++tiempoTotal << endl;
         cout << "\033[" << 10 << ";59H    " << endl;
         cout << "\033[" << 11 << ";59H    " << endl;
-        cout << "\033[" << 10 << ";59H" << p.adherirTiempoTranscurrido() << endl;
-        cout << "\033[" << 11 << ";59H" << p.sustraerTiempoRestante() << endl;
+        cout << "\033[" << 10 << ";59H" << lista[index].adherirTiempoTranscurrido() << endl;
+        cout << "\033[" << 11 << ";59H" << lista[index].sustraerTiempoRestante() << endl;
         sleep(1);
     }
-    /* Tercer Tabla "Terminados" */
-    cout << "\033[" << 8 + procesoActual + loteActual << ";89H" << p.getId() << endl;
-    cout << "\033[" << 8 + procesoActual + loteActual << ";96H" << p.getOperacion() << endl;
-    float resultado = 0;
-    if(p.getOperador() == "+") {
-        resultado = p.getN1() + p.getN2();
-    } else if(p.getOperador() == "-") {
-        resultado = p.getN1() - p.getN2();
-    } else if(p.getOperador() == "*") {
-        resultado = p.getN1() * p.getN2();
-    } else if(p.getOperador() == "/") {
-        resultado = p.getN1() / p.getN2();
-    } else {
-        resultado = int(p.getN1()) % int(p.getN2());
-    }
-    cout << "\033[" << 8 + procesoActual + loteActual << ";155H" << resultado << endl;
+    return 2;
 }
 
 void Interfaz::tiempoEjecucionTotal() {
@@ -228,7 +273,7 @@ bool Interfaz::checkNumInt(const string& cadena) {
     return false;
 }
 
-int Interfaz::kbhit(void) {
+int Interfaz::kbhit() {
     struct termios oldt, newt;
     int ch;
     int oldf;
@@ -240,24 +285,36 @@ int Interfaz::kbhit(void) {
     fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
     ch = getchar();
     if(ch != EOF) {
-        ungetc(ch, stdin);
-        return 1;
+        return ch;
     }
     return 0;
 }
 
-void Interfaz::kbhitOpc(int tecla) {
-    if(tecla == 105 or tecla == 73){
-
+void Interfaz::pausaKbhit() {
+    if(procesoActual > 4) {
+        cout << "\033[" << 10 + procesoActual + loteActual << ";1H                " << endl;
+    } else {
+        cout << "\033[15;1H              " << endl << endl;
     }
-    else if(tecla == 101 or tecla == 69){
-
-    }
-    else if(tecla == 112 or tecla == 80){
-        while(true){
-            if(kbhit() == 99 or kbhit() == 67){
-                break;
+    cout << "¡Pausa! Presione [c] para continuar..." << endl << endl;
+    int ch = 0;
+    while (getchar() != EOF);
+    while(true) {
+        ch = kbhit();
+        if(ch == 99 or ch == 67) {
+            if(procesoActual > 4) {
+                cout << "\033[" << 10 + procesoActual + loteActual << ";1H                              " << endl;
+            } else {
+                cout << "\033[15;1H                           " << endl << endl;
             }
+            cout << "!Continuemos!" << endl << endl;
+
+            if(procesoActual > 4) {
+                cout << "\033[" << 10 + procesoActual + loteActual << ";1H                              " << endl;
+            } else {
+                cout << "\033[15;1H                           " << endl << endl;
+            }
+            break;
         }
     }
 }

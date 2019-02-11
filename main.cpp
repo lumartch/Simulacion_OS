@@ -19,22 +19,41 @@ int kbhit(void) {
     oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
     fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
     ch = getchar();
+    while (getchar() != EOF);
     if(ch != EOF) {
-        ungetc(ch, stdin);
-        return 1;
+        return ch;
     }
     return 0;
+}
+
+void kbhitOpc(){
+    int ch = kbhit();
+    if(ch == 105 or ch == 73){
+        cout << "Interrupcion" << endl;
+    }
+    else if(ch == 101 or ch == 69){
+        cout << "Error" << endl;
+    }
+    else if(ch == 112 or ch == 80){
+        cout << "Pausa" << endl;
+        while (getchar() != EOF);
+        while(true){
+            if(kbhit()){
+                ch = getchar();
+                if(ch == 99 or ch == 67){
+                    cout << "Continuar" << endl;
+                    break;
+                }
+            }
+        }
+    }
 }
 
 int main() {
     new Interfaz;
     /*while(true) {
         cout << "Prueba" << endl;
-        if(kbhit()){
-            cout << "Tecla: ";
-            int ch = getchar();
-            cout << ch << endl;
-        }
+        kbhitOpc();
         sleep(1);
     }*/
     return 0;

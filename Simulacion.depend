@@ -1,34 +1,11 @@
 # depslib dependency file v1.0
-1548174485 source:/home/lumartch/OneDrive/CUCEI/S-SO/Simulacion/main.cpp
-	<iostream>
-	<interfaz.h>
-
-1548343726 /home/lumartch/OneDrive/CUCEI/S-SO/Simulacion//interfaz.h
-	<iostream>
-	<cstdio>
-	<string>
-	<queue>
-	<regex>
-	<ncurses.h>
-
-1548345577 source:/home/lumartch/OneDrive/CUCEI/S-SO/Simulacion/interfaz.cpp
+1549861290 source:/home/lumartch/Simulacion_OS/interfaz.cpp
 	"interfaz.h"
 
-1548343726 /home/lumartch/OneDrive/CUCEI/S-SO/Simulacion/interfaz.h
-	<iostream>
-	<cstdio>
-	<string>
-	<queue>
-	<regex>
-	<ncurses.h>
-
-1549673845 source:/home/lumartch/Simulacion_OS/interfaz.cpp
-	"interfaz.h"
-
-1549673790 /home/lumartch/Simulacion_OS/interfaz.h
+1549860483 /home/lumartch/Simulacion_OS/interfaz.h
 	<iostream>
 	<queue>
-	<list>
+	<vector>
 	<ctime>
 	<string>
 	<regex>
@@ -39,49 +16,25 @@
 	<fcntl.h>
 	"lote.h"
 
-1549671508 source:/home/lumartch/Simulacion_OS/main.cpp
+1549820357 /home/lumartch/Simulacion_OS/lote.h
+	"proceso.h"
+
+1549820357 /home/lumartch/Simulacion_OS/proceso.h
+	<string>
+	<sstream>
+	<iomanip>
+
+1549820357 source:/home/lumartch/Simulacion_OS/lote.cpp
+	"lote.h"
+
+1549820357 source:/home/lumartch/Simulacion_OS/proceso.cpp
+	"proceso.h"
+
+1549851515 source:/home/lumartch/Simulacion_OS/main.cpp
 	<iostream>
 	"interfaz.h"
 	<termios.h>
 	<cstdlib>
 	<cstdio>
 	<fcntl.h>
-
-1549663644 /home/lumartch/Simulacion_OS//interfaz.h
-	<iostream>
-	<string>
-	<queue>
-	<list>
-	<regex>
-	<unistd.h>
-	"lote.h"
-
-1549672477 source:/home/lumartch/Simulacion_OS/proceso.cpp
-	"proceso.h"
-
-1549672492 /home/lumartch/Simulacion_OS/proceso.h
-	<string>
-	<sstream>
-	<iomanip>
-
-1549655746 source:/home/lumartch/Simulacion_OS/lote.cpp
-	"lote.h"
-
-1549655746 /home/lumartch/Simulacion_OS/lote.h
-	"proceso.h"
-
-1549655746 /home/lumartch/Simulacion_OS//lote.h
-	"proceso.h"
-
-1549663387 /home/lumartch/Simulacion_OS//proceso.h
-	<string>
-	<sstream>
-	<iomanip>
-
-1549665353 source:/home/lumartch/Simulacion_OS/kbhit.cpp
-	"kbhit.h"
-	<unistd.h>
-
-1549665311 /home/lumartch/Simulacion_OS/kbhit.h
-	<termios.h>
 

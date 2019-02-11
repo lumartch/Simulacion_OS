@@ -52,18 +52,72 @@ void Interfaz::menuInicio() {
             }
         }
         unsigned int index = 0;
-        int procesados = 0;
+        int procesados = 0, aux = 0;
         while(!lista.empty()) {
             limpiarTablaProceso();
             sleep(1);
-            if(index > lista.size() - 1) {
-                index = 0;
-            }
             int res = procesarDatos(index);
             if(res == 1) {
+                /* Procesos con ERROR */
                 procesoActual++;
                 procesoTotal--;
-                quitarProceso(procesados++);
+                if(lista.size() == 3){
+                    procesados = index + 1;
+                }
+                else if(lista.size() == 2){
+                    aux = procesados;
+                    if(procesados == 2){
+                        if(index == 0){
+                            procesados = index;
+                        }
+                        else {
+                            procesados--;
+                        }
+                    }
+                    else if(procesados == 1){
+                        if(index == 0){
+                            procesados--;
+                        }
+                        else {
+                            procesados++;
+                        }
+                    }
+                    else {
+                        if(index == 0){
+                            procesados++;
+                        }
+                        else {
+                            procesados += 2;
+                        }
+                    }
+                }
+                else{
+                    if(procesados == 2){
+                        if(aux == 0){
+                            procesados--;
+                        }
+                        else{
+                            procesados = 0;
+                        }
+                    }
+                    else if(procesados == 1){
+                        if(aux == 0){
+                            procesados++;
+                        }
+                        else{
+                            procesados = 0;
+                        }
+                    }
+                    else{
+                        if(aux == 1){
+                            procesados = 2;
+                        }
+                        else{
+                            procesados = 1;
+                        }
+                    }
+                }
+                quitarProceso(--procesados);
                 agregarTabulacionTerminado(index);
                 cout << "\033[" << 8 + procesoActual + loteActual << ";89H" << lista[index].getId() << endl;
                 cout << "\033[" << 8 + procesoActual + loteActual << ";96H" << lista[index].getOperacion() << endl;
@@ -72,7 +126,7 @@ void Interfaz::menuInicio() {
             } else if(res == 2) {
                 procesoActual++;
                 procesoTotal--;
-                quitarProceso(procesados++);
+                quitarProceso(int(index));
                 agregarTabulacionTerminado(index);
                 /* Tercer Tabla "Terminados" */
                 cout << "\033[" << 8 + procesoActual + loteActual << ";89H" << lista[index].getId() << endl;
@@ -93,6 +147,9 @@ void Interfaz::menuInicio() {
                 lista.erase(lista.begin() + index);
             } else {
                 index++;
+            }
+            if(index > lista.size() - 1) {
+                index = 0;
             }
             cout << "\033[2;50H" << ++tiempoTotal << endl;
         }

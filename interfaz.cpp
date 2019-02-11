@@ -56,6 +56,10 @@ void Interfaz::menuInicio() {
         while(!lista.empty()) {
             limpiarTablaProceso();
             sleep(1);
+            if(index > lista.size() - 1) {
+                index = 0;
+            }
+            pausaProceso();
             int res = procesarDatos(index);
             if(res == 1) {
                 procesoActual++;
@@ -65,7 +69,7 @@ void Interfaz::menuInicio() {
                 cout << "\033[" << 8 + procesoActual + loteActual << ";89H" << lista[index].getId() << endl;
                 cout << "\033[" << 8 + procesoActual + loteActual << ";96H" << lista[index].getOperacion() << endl;
                 cout << "\033[" << 8 + procesoActual + loteActual << ";155HERROR" << endl;
-                lista.erase(lista.begin() + int(index));
+                lista.erase(lista.begin() + index);
             } else if(res == 2) {
                 procesoActual++;
                 procesoTotal--;
@@ -87,21 +91,15 @@ void Interfaz::menuInicio() {
                     resultado = int(lista[index].getN1()) % int(lista[index].getN2());
                 }
                 cout << "\033[" << 8 + procesoActual + loteActual << ";155H" << resultado << endl;
-                lista.erase(lista.begin() + int(index));
+                lista.erase(lista.begin() + index);
             } else {
                 index++;
-            }
-
-            if(index > lista.size() + 1) {
-                index = 0;
             }
             cout << "\033[2;50H" << ++tiempoTotal << endl;
         }
         sleep(1);
     }
     pausaProceso();
-    sleep(10);
-    //getline(cin, cadena);
 }
 
 void Interfaz::generarProcesos() {
@@ -111,14 +109,14 @@ void Interfaz::generarProcesos() {
     srand(time(nullptr));
     for(int i = 0; i < procesoTotal; i++) {
         Proceso p;
-        int opTipo = 4;
+        int opTipo = rand() %5 - 1;
         p.setId(i + 1);
         p.setN1(rand() % -2000 + 2000);
         p.setOperador(op[opTipo]);
         if(opTipo == 3 or opTipo == 4) {
-            p.setN2(rand() % 1 + 100);
+            p.setN2(rand() % 1 + 10);
         } else {
-            p.setN2(rand() % 1 + 200);
+            p.setN2(rand() % -2000 + 1000);
         }
         p.setTiempoEstimado(rand() % 7 + 9);
         l.setProceso(p, actual++);
@@ -284,7 +282,9 @@ int Interfaz::kbhit() {
     oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
     fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
     ch = getchar();
+    fflush(stdin);
     if(ch != EOF) {
+        //ungetc(ch, stdin);
         return ch;
     }
     return 0;
@@ -303,9 +303,9 @@ void Interfaz::pausaKbhit() {
         ch = kbhit();
         if(ch == 99 or ch == 67) {
             if(procesoActual > 4) {
-                cout << "\033[" << 10 + procesoActual + loteActual << ";1H                              " << endl;
+                cout << "\033[" << 10 + procesoActual + loteActual << ";1H                                      " << endl;
             } else {
-                cout << "\033[15;1H                           " << endl << endl;
+                cout << "\033[15;1H                                      " << endl << endl;
             }
             cout << "!Continuemos!" << endl << endl;
 

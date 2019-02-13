@@ -1,8 +1,8 @@
 # depslib dependency file v1.0
-1549913202 source:/home/lumartch/Simulacion_OS/interfaz.cpp
+1550095756 source:/home/lumartch/Simulacion_OS/interfaz.cpp
 	"interfaz.h"
 
-1549910290 /home/lumartch/Simulacion_OS/interfaz.h
+1550095250 /home/lumartch/Simulacion_OS/interfaz.h
 	<iostream>
 	<queue>
 	<vector>

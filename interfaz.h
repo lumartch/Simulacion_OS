@@ -43,10 +43,9 @@ class Interfaz {
         int procesoTotal;
         void generarProcesos();
         void procesamientoLotes();
+        void imprimirLote();
         void agregarTabulacionTerminado(const int &cant);
-        void agregarTabulacionLote(Proceso& p, const int &cant);
         void limpiarTabulacionLote();
-        void quitarProceso(const int &pos);
         int procesarDatos(unsigned int &index);
         void tiempoEjecucionTotal();
         void pausa();

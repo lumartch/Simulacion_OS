@@ -47,86 +47,29 @@ void Interfaz::menuInicio() {
         limpiarTabulacionLote();
         for(int i = 0; i < 3; i++) {
             if(l[i].getId() != -1111) {
-                agregarTabulacionLote(l[i], i);
                 lista.push_back(l[i]);
             }
         }
         unsigned int index = 0;
-        int procesados = 0, aux = 0;
         while(!lista.empty()) {
             limpiarTablaProceso();
+            imprimirLote();
             sleep(1);
             int res = procesarDatos(index);
             if(res == 1) {
                 /* Procesos con ERROR */
                 procesoActual++;
                 procesoTotal--;
-                if(lista.size() == 3){
-                    procesados = index + 1;
-                }
-                else if(lista.size() == 2){
-                    aux = procesados;
-                    if(procesados == 2){
-                        if(index == 0){
-                            procesados = index;
-                        }
-                        else {
-                            procesados--;
-                        }
-                    }
-                    else if(procesados == 1){
-                        if(index == 0){
-                            procesados--;
-                        }
-                        else {
-                            procesados++;
-                        }
-                    }
-                    else {
-                        if(index == 0){
-                            procesados++;
-                        }
-                        else {
-                            procesados += 2;
-                        }
-                    }
-                }
-                else{
-                    if(procesados == 2){
-                        if(aux == 0){
-                            procesados--;
-                        }
-                        else{
-                            procesados = 0;
-                        }
-                    }
-                    else if(procesados == 1){
-                        if(aux == 0){
-                            procesados++;
-                        }
-                        else{
-                            procesados = 0;
-                        }
-                    }
-                    else{
-                        if(aux == 1){
-                            procesados = 2;
-                        }
-                        else{
-                            procesados = 1;
-                        }
-                    }
-                }
-                quitarProceso(--procesados);
                 agregarTabulacionTerminado(index);
                 cout << "\033[" << 8 + procesoActual + loteActual << ";89H" << lista[index].getId() << endl;
                 cout << "\033[" << 8 + procesoActual + loteActual << ";96H" << lista[index].getOperacion() << endl;
                 cout << "\033[" << 8 + procesoActual + loteActual << ";155HERROR" << endl;
                 lista.erase(lista.begin() + index);
+                imprimirLote();
+
             } else if(res == 2) {
                 procesoActual++;
                 procesoTotal--;
-                quitarProceso(int(index));
                 agregarTabulacionTerminado(index);
                 /* Tercer Tabla "Terminados" */
                 cout << "\033[" << 8 + procesoActual + loteActual << ";89H" << lista[index].getId() << endl;
@@ -145,6 +88,7 @@ void Interfaz::menuInicio() {
                 }
                 cout << "\033[" << 8 + procesoActual + loteActual << ";155H" << resultado << endl;
                 lista.erase(lista.begin() + index);
+                imprimirLote();
             } else {
                 index++;
             }
@@ -199,9 +143,9 @@ void Interfaz::procesamientoLotes() {
     cout << "| No. Lotes Pendientes  |       | Tiempo Total | 0       |" << endl;
     cout << "+-------------+---------+-------+--------------+---------+" << endl;
     cout << "| Lote actual |         | "<< endl;
-    cout << "+----------+--+---------+-------------+-----------------------------------------------+---------------------------------------------------------------------------------------------+" << endl;
-    cout << "|  ID      |  Tiempo estimado         |                Proceso                        |                                             Terminados                                      |" << endl;
-    cout << "+----------+--------------------------+-----------------+-----------------------------+------+----------------------------------------------------------+---------------------------+" << endl;
+    cout << "+------+------+-------+-+-------------+-----------------------------------------------+---------------------------------------------------------------------------------------------+" << endl;
+    cout << "|  ID  |  T.Estimado  |  T.Restante   |                Proceso                        |                                             Terminados                                      |" << endl;
+    cout << "+------+--------------+---------------+-----------------+-----------------------------+------+----------------------------------------------------------+---------------------------+" << endl;
     cout << "                                      | ID Programa     |                             | ID   |        Operación                                         |          Resultado        |" << endl;
     cout << "                                      | Operación       |                             +------+----------------------------------------------------------+---------------------------+ "<< endl;
     cout << "                                      | T. Transcurrido |                             | " << endl;
@@ -225,24 +169,24 @@ void Interfaz::agregarTabulacionTerminado(const int &cant) {
     }
 }
 
-void Interfaz::agregarTabulacionLote(Proceso& p, const int &cant) {
-    /* Procesados */
-    cout << "\033[" << 8 + cant << ";2H                                      " << endl;
-    cout << "\033[" << 8 + cant << ";1H|          |                          |"<< endl;
-    cout << "\033[" << 9 + cant << ";1H+----------+--------------------------+"<< endl;
-    /* Primer tabla  */
-    cout << "\033[" << 8 + cant << ";3H" << p.getId() << endl;
-    cout << "\033[" << 8 + cant << ";32H" << p.getTiempoEstimado() << endl;
+void Interfaz::imprimirLote() {
+    limpiarTabulacionLote();
+    for(unsigned int i = 0; i < lista.size(); i++){
+        /* Procesados */
+        cout << "\033[" << 8 + i << ";2H                                      " << endl;
+        cout << "\033[" << 8 + i << ";1H|      |              |               |"<< endl;
+        cout << "\033[" << 9 + i << ";1H+------+--------------+---------------+"<< endl;
+        /* Primer tabla  */
+        cout << "\033[" << 8 + i << ";2H" << lista[i].getId() << endl;
+        cout << "\033[" << 8 + i << ";11H" << lista[i].getTiempoEstimado() << endl;
+        cout << "\033[" << 8 + i << ";26H" << lista[i].getTiempoRestante() << endl;
+    }
 }
 
 void Interfaz::limpiarTabulacionLote() {
     for(int i = 0; i < 4; i++) {
         cout << "\033[" << 8 + i << ";1H                                      "<< endl;
     }
-}
-
-void Interfaz::quitarProceso(const int &pos) {
-    cout << "\033[" << 8 + pos << ";2H                                     " << endl;
 }
 
 int Interfaz::procesarDatos(unsigned int &index) {

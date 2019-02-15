@@ -39,7 +39,6 @@ void Interfaz::menuInicio() {
     generarProcesos();
     procesamientoLotes();
     while(!cola.empty()) {
-        cout << "\033[2;50H" << ++tiempoTotal << endl;
         cout << "\033[2;27H" << cola.size() - 1 << endl;
         cout << "\033[4;17H" << ++loteActual << endl;
         Lote l = cola.front();
@@ -95,7 +94,6 @@ void Interfaz::menuInicio() {
             if(index > lista.size() - 1) {
                 index = 0;
             }
-            cout << "\033[2;50H" << ++tiempoTotal << endl;
         }
         sleep(1);
     }
@@ -148,8 +146,8 @@ void Interfaz::procesamientoLotes() {
     cout << "+------+--------------+---------------+-----------------+-----------------------------+------+----------------------------------------------------------+---------------------------+" << endl;
     cout << "                                      | ID Programa     |                             | ID   |        Operación                                         |          Resultado        |" << endl;
     cout << "                                      | Operación       |                             +------+----------------------------------------------------------+---------------------------+ "<< endl;
-    cout << "                                      | T. Transcurrido |                             | " << endl;
     cout << "                                      | T. Restante     |                             | " << endl;
+    cout << "                                      | T. Transcurrido |                             | " << endl;
     cout << "                                      +-----------------+-----------------------------+ " << endl;
 }
 
@@ -205,7 +203,6 @@ int Interfaz::procesarDatos(unsigned int &index) {
     cout << "\033[" << 9 << ";59H" << lista[index].getOperacion() << endl;
     cout << "\033[" << 10 << ";59H" << lista[index].getTiempoRestante() << endl;
     cout << "\033[" << 11 << ";59H" << lista[index].getTiempoTranscurrido() << endl;
-    cout << "\033[2;50H" << ++tiempoTotal << endl;
     sleep(1);
     ch = kbhit();
     if(ch == 105 or ch == 73) {
@@ -232,8 +229,8 @@ int Interfaz::procesarDatos(unsigned int &index) {
         cout << "\033[2;50H" << ++tiempoTotal << endl;
         cout << "\033[" << 10 << ";59H    " << endl;
         cout << "\033[" << 11 << ";59H    " << endl;
-        cout << "\033[" << 10 << ";59H" << lista[index].adherirTiempoTranscurrido() << endl;
-        cout << "\033[" << 11 << ";59H" << lista[index].sustraerTiempoRestante() << endl;
+        cout << "\033[" << 10 << ";59H" << lista[index].sustraerTiempoRestante() << endl;
+        cout << "\033[" << 11 << ";59H" << lista[index].adherirTiempoTranscurrido() << endl;
         sleep(1);
     }
     return 2;

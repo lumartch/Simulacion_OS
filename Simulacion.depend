@@ -2,7 +2,7 @@
 1550095756 source:/home/lumartch/Simulacion_OS/interfaz.cpp
 	"interfaz.h"
 
-1550095250 /home/lumartch/Simulacion_OS/interfaz.h
+1550262428 /home/lumartch/Simulacion_OS/interfaz.h
 	<iostream>
 	<queue>
 	<vector>
@@ -16,21 +16,21 @@
 	<fcntl.h>
 	"lote.h"
 
-1549820357 /home/lumartch/Simulacion_OS/lote.h
+1550262428 /home/lumartch/Simulacion_OS/lote.h
 	"proceso.h"
 
-1549820357 /home/lumartch/Simulacion_OS/proceso.h
+1550262429 /home/lumartch/Simulacion_OS/proceso.h
 	<string>
 	<sstream>
 	<iomanip>
 
-1549820357 source:/home/lumartch/Simulacion_OS/lote.cpp
+1550262428 source:/home/lumartch/Simulacion_OS/lote.cpp
 	"lote.h"
 
-1549820357 source:/home/lumartch/Simulacion_OS/proceso.cpp
+1550262429 source:/home/lumartch/Simulacion_OS/proceso.cpp
 	"proceso.h"
 
-1549909408 source:/home/lumartch/Simulacion_OS/main.cpp
+1550262428 source:/home/lumartch/Simulacion_OS/main.cpp
 	<iostream>
 	"interfaz.h"
 

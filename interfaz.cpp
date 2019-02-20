@@ -3,8 +3,6 @@
 Interfaz::Interfaz() {
     procesoActual = 0;
     procesoTotal = 0;
-    loteActual = 0;
-    lotesPendientes = 0;
     tiempoTotal = 0;
     tiempoTranscurrido = 0;
     tiempoRestante = 0;
@@ -38,26 +36,20 @@ void Interfaz::menuInicio() {
     system(CLEAR);
     generarProcesos();
     procesamientoLotes();
-    while(!cola.empty()) {
-        cout << "\033[2;27H" << cola.size() - 1 << endl;
-        cout << "\033[4;17H" << ++loteActual << endl;
-        Lote l = cola.front();
-        cola.pop();
+    while(!nuevo.empty()) {
+        cout << "\033[2;27H" << nuevo.size() - 1 << endl;
+        nuevo.pop();
         limpiarTabulacionLote();
-        for(int i = 0; i < 3; i++) {
-            if(l[i].getId() != -1111) {
-                lista.push_back(l[i]);
-            }
-        }
-        unsigned int index = 0;
+
+        /*unsigned int index = 0;
         while(!lista.empty()) {
             limpiarTablaProceso();
             imprimirLote();
             sleep(1);
             int res = procesarDatos(index);
-            if(res == 1) {
+            if(res == 1) {*/
                 /* Procesos con ERROR */
-                procesoActual++;
+                /*procesoActual++;
                 procesoTotal--;
                 agregarTabulacionTerminado(index);
                 cout << "\033[" << 8 + procesoActual + loteActual << ";89H" << lista[index].getId() << endl;
@@ -69,9 +61,9 @@ void Interfaz::menuInicio() {
             } else if(res == 2) {
                 procesoActual++;
                 procesoTotal--;
-                agregarTabulacionTerminado(index);
+                agregarTabulacionTerminado(index);*/
                 /* Tercer Tabla "Terminados" */
-                cout << "\033[" << 8 + procesoActual + loteActual << ";89H" << lista[index].getId() << endl;
+                /*cout << "\033[" << 8 + procesoActual + loteActual << ";89H" << lista[index].getId() << endl;
                 cout << "\033[" << 8 + procesoActual + loteActual << ";96H" << lista[index].getOperacion() << endl;
                 float resultado = 0;
                 if(lista[index].getOperador() == "+") {
@@ -95,7 +87,7 @@ void Interfaz::menuInicio() {
                 index = 0;
             }
         }
-        sleep(1);
+        sleep(1);*/
     }
     cout << "\033[15;1H" << endl << endl;
     cout << "Presione [enter] para continuar...";
@@ -107,7 +99,6 @@ void Interfaz::menuInicio() {
 }
 
 void Interfaz::generarProcesos() {
-    Lote l;
     int actual = 0;
     string op[5] = {"+", "-", "*", "/", "%"};
     srand(time(nullptr));
@@ -123,48 +114,42 @@ void Interfaz::generarProcesos() {
             p.setN2(rand() % -2000 + 1000);
         }
         p.setTiempoEstimado(rand() % 7 + 11);
-        l.setProceso(p, actual++);
         if(actual == 3) {
             actual = 0;
-            cola.push(l);
-            Lote aux;
-            l = aux;
+            nuevo.push(p);
         }
-    }
-    if(actual != 3 and actual != 0) {
-        cola.push(l);
     }
 }
 
 void Interfaz::procesamientoLotes() {
-    cout << "+-----------------------+-------+--------------+---------+" << endl;
-    cout << "| No. Lotes Pendientes  |       | Tiempo Total | 0       |" << endl;
-    cout << "+-------------+---------+-------+--------------+---------+" << endl;
-    cout << "| Lote actual |         | "<< endl;
-    cout << "+------+------+-------+-+-------------+-----------------------------------------------+---------------------------------------------------------------------------------------------+" << endl;
-    cout << "|  ID  |  T.Estimado  |  T.Restante   |                Proceso                        |                                             Terminados                                      |" << endl;
-    cout << "+------+--------------+---------------+-----------------+-----------------------------+------+----------------------------------------------------------+---------------------------+" << endl;
-    cout << "                                      | ID Programa     |                             | ID   |        Operación                                         |          Resultado        |" << endl;
-    cout << "                                      | Operación       |                             +------+----------------------------------------------------------+---------------------------+ "<< endl;
-    cout << "                                      | T. Restante     |                             | " << endl;
-    cout << "                                      | T. Transcurrido |                             | " << endl;
-    cout << "                                      +-----------------+-----------------------------+ " << endl;
+    cout << "+-----------------+-------+--------------+---------+" << endl;
+    cout << "| Procesos nuevos |       | Tiempo Total |         |" << endl;
+    cout << "+------+---------++-------+------+-------+---------+-----------------------------+---------------------------------------------------------------------------------------------+" << endl;
+    cout << "|  ID  |  T.M.E  |  T.Restante   |                Ejecucion                      |                                             Terminados                                      |" << endl;
+    cout << "+------+---------+---------------+-----------------+-----------------------------+------+----------------------------------------------------------+---------------------------+" << endl;
+    cout << "                                 | ID Programa     |                             | ID   |        Operación                                         |          Resultado        |" << endl;
+    cout << "                                 | Operación       |                             +------+----------------------------------------------------------+---------------------------+ "<< endl;
+    cout << "                                 | T. Restante     |                             | " << endl;
+    cout << "                                 | T. Transcurrido |                             | " << endl;
+    cout << "                                 +-----------------+-----------------------------+ " << endl;
+    cout << "+---------------+----------------+" << endl;
+    cout << "| ID Bloqueado  |  T. de bloqueo |" << endl;
+    cout << "+---------------+----------------+" << endl;
 }
 
 void Interfaz::agregarTabulacionTerminado(const int &cant) {
     /* Terminados */
-    cout << "\033[" << 8 + procesoActual + loteActual << ";88H                                                                                             " << endl;
-    cout << "\033[" << 8 + procesoActual + loteActual << ";87H|      |                                                          |                           |" << endl;
-    if(cola.size() == 0 or (cant + 1 ) == 3) {
+    cout << "\033[" << 8 + procesoActual << ";88H                                                                                             " << endl;
+    cout << "\033[" << 8 + procesoActual << ";87H|      |                                                          |                           |" << endl;
+    /*if(nuevo.size() == 0 or (cant + 1 ) == 3) {
         cout << "\033[" << 9 + procesoActual + loteActual << ";87H+------+----------------------------------------------------------+---------------------------+" << endl;
     } else {
-        /* Terminados */
         if(procesoActual == 3) {
             cout << "\033[" << 9 + procesoActual + loteActual << ";87H+------+----------------------------------------------------------+---------------------------|" << endl;
         } else {
             cout << "\033[" << 9 + procesoActual + loteActual << ";87H|------+----------------------------------------------------------+---------------------------|" << endl;
         }
-    }
+    }*/
 }
 
 void Interfaz::imprimirLote() {
@@ -250,10 +235,10 @@ void Interfaz::limpiarTablaProceso() {
 }
 
 void Interfaz::pausaProceso() {
-    cout << "\033[15;1H" << endl << endl;
+    cout << "\033[20;1H" << endl << endl;
     cout << "Presione [enter] para continuar...";
     cin.get();
-    cout << "\033[15;1H" << endl << endl;
+    cout << "\033[20;1H" << endl << endl;
     cout << "                                   ";
 }
 

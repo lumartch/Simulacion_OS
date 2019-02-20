@@ -32,10 +32,10 @@ class Interfaz {
         virtual ~Interfaz();
         void menuInicio();
     private:
-        queue<Lote> cola;
+        queue<Proceso> nuevo;
+        queue<Proceso> bloqueado;
+        queue<Proceso> listo;
         vector<Proceso> lista;
-        int loteActual;
-        int lotesPendientes;
         int tiempoTotal;
         int tiempoTranscurrido;
         int tiempoRestante;

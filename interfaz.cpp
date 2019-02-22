@@ -18,7 +18,7 @@ void Interfaz::menuInicio() {
     do {
         system(CLEAR);
         cout << "+-------------------------------+--------------+------------------+" << endl;
-        cout << "|      Simulación de un OS        V 1.2                           |" << endl;
+        cout << "|      Simulación de un OS        V 1.3                           |" << endl;
         cout << "+-------------------------------+--------------+------------------+" << endl;
         cout << "| Ingrese la cantidad de procesos a crear:                        |" << endl;
         cout << "+-----------------------------------------------------------------+" << endl;
@@ -141,15 +141,6 @@ void Interfaz::agregarTabulacionTerminado(const int &cant) {
     /* Terminados */
     cout << "\033[" << 8 + procesoActual << ";88H                                                                                             " << endl;
     cout << "\033[" << 8 + procesoActual << ";87H|      |                                                          |                           |" << endl;
-    /*if(nuevo.size() == 0 or (cant + 1 ) == 3) {
-        cout << "\033[" << 9 + procesoActual + loteActual << ";87H+------+----------------------------------------------------------+---------------------------+" << endl;
-    } else {
-        if(procesoActual == 3) {
-            cout << "\033[" << 9 + procesoActual + loteActual << ";87H+------+----------------------------------------------------------+---------------------------|" << endl;
-        } else {
-            cout << "\033[" << 9 + procesoActual + loteActual << ";87H|------+----------------------------------------------------------+---------------------------|" << endl;
-        }
-    }*/
 }
 
 void Interfaz::imprimirLote() {

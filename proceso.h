@@ -19,6 +19,7 @@ class Proceso {
         void setTRespuesta(const int & tRespuesta);
         void setTEspera(const int & tEspera);
         void setTServicio(const int & tServicio);
+        void setTBloqueo();
         int adherirTTranscurrido();
         int sustraerTRestante();
         int getId();
@@ -34,6 +35,8 @@ class Proceso {
         int getTServicio();
         int getTTranscurrido();
         int getTRestante();
+        int getTBloqueo();
+        int sustraerTBloqueo();
     private:
         int id;
         int n1;
@@ -47,6 +50,7 @@ class Proceso {
         int tServicio;
         int tTranscurrido;
         int tRestante;
+        int tBloqueado;
 };
 
 #endif // PROCESO_H

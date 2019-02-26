@@ -10,7 +10,6 @@
 #include <iostream>
 /* TDA para los datos generados */
 #include <queue>
-#include <vector>
 /* Herramientas para el manejo de interfaz */
 #include <ctime>
 #include <string>
@@ -33,20 +32,20 @@ class Interfaz {
         void menuInicio();
     private:
         queue<Proceso> nuevo;
-        vector<Proceso> listo;
+        queue<Proceso> listo;
         queue<Proceso> ejecucion;
-        vector<Proceso> bloqueado;
-        vector<Proceso> terminado;
+        queue<Proceso> bloqueado;
+        queue<Proceso> terminado;
         int index;
         int tiempoTotal;
         int procesoActual;
         int procesoTotal;
         void generarProcesos();
         void pantallaDeProcesos();
-        void limpiarEjecucion();
         void imprimirListos();
+        void imprimirEjecucion();
         void imprimirBloqueados();
-        void tabulacionTerminados();
+        void imprimirTerminados();
         int procesarDatos();
         void pausa();
         void pausaProceso();

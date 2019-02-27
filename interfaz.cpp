@@ -76,12 +76,12 @@ void Interfaz::menuInicio() {
             } else if(ch == 2) {
                 /*Terminado*/
                 ejecucion.front().setTBloqueo(0);
-                ejecucion.front().setResultado("Hola mundo");
+                ejecucion.front().setResultado("Hi");
                 terminado.push(ejecucion.front());
                 ejecucion.pop();
                 keyboard = true;
             } else {
-
+                keyboard = false;
             }
         }
     }
@@ -110,28 +110,22 @@ int Interfaz::procesarDatos() {
         ch = -1;
     }
     if(bloqueado.size() == 3) {
-        bool f = false;
-        unsigned int i = 0;
-        while(f == false) {
-            bloqueado.front().sustraerTBloqueo();
-            cout << "\033[" << 13 + i << ";52H              " << endl;
-            cout << "\033[" << 13 + i << ";52H" << bloqueado.front().getTBloqueo() << endl;
+        while(bloqueado.size() == 3) {
+            cout << "\033[" << 13  << ";52H              " << endl;
+            cout << "\033[" << 13  << ";52H" << bloqueado.front().getTBloqueo() << endl;
             if(bloqueado.front().getTBloqueo() == 0) {
-                f = true;
                 listo.push(bloqueado.front());
+                bloqueado.pop();
             } else {
-                bloqueado.push(bloqueado.front());
-            }
-            bloqueado.pop();
-            i++;
-            if(i == bloqueado.size()) {
-                i = 0;
+                bloqueado.front().sustraerTBloqueo();
             }
             sleep(1);
         }
     } else {
         /* Impresión del tiempo transcurrido, tiempo total e incremento del tiempo total */
         while(ejecucion.front().getTRestante() > 0) {
+            imprimirListos();
+            imprimirBloqueados();
             ch = kbhit();
             if(ch == 105 or ch == 73) {
                 return 0;
@@ -148,6 +142,15 @@ int Interfaz::procesarDatos() {
             cout << "\033[" << 9 << ";54H    " << endl;
             cout << "\033[" << 8 << ";54H" << ejecucion.front().sustraerTRestante() << endl;
             cout << "\033[" << 9 << ";54H" << ejecucion.front().adherirTTranscurrido() << endl;
+            if(!bloqueado.empty()){
+                if(bloqueado.front().getTBloqueo() == 0){
+                    listo.push(bloqueado.front());
+                    bloqueado.pop();
+                }
+                else{
+                    bloqueado.front().sustraerTBloqueo();
+                }
+            }
             // Impresión de cualquier proceso en bloqueado
             sleep(1);
             if(ejecucion.front().getTRestante() == 0){
@@ -156,7 +159,6 @@ int Interfaz::procesarDatos() {
                 cout << "\033[" << 9 << ";54H    " << endl;
                 cout << "\033[" << 8 << ";54H" << ejecucion.front().getTRestante() << endl;
                 cout << "\033[" << 9 << ";54H" << ejecucion.front().getTTranscurrido() << endl;
-                pausaKbhit();
                 ch = 2;
                 break;
             }
@@ -242,7 +244,7 @@ void Interfaz::imprimirEjecucion() {
 void Interfaz::imprimirBloqueados() {
     // Código para limpiar los campos de bloqueo
     for(int i = 0; i < 4; i++) {
-        cout << "\033[" << 13 + i << ";35H                                  " << endl;
+        cout << "\033[" << 13 + i << ";34H                                  " << endl;
     }
     // Código para imprimir los campos de bloqueo
     for(unsigned int i = 0; i < bloqueado.size(); i++) {

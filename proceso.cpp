@@ -65,12 +65,12 @@ void Proceso::setTServicio(const int& tServicio) {
     this->tRestante = tServicio;
 }
 
-int Proceso::adherirTTranscurrido() {
-    return tTranscurrido++;
+void Proceso::adherirTTranscurrido() {
+    tTranscurrido++;
 }
 
-int Proceso::sustraerTRestante() {
-    return tRestante--;
+void Proceso::sustraerTRestante() {
+    tRestante--;
 }
 
 void Proceso::setTBloqueo(const int & tBloqueado) {

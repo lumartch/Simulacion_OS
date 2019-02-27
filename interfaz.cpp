@@ -136,44 +136,36 @@ int Interfaz::procesarDatos() {
         while(ch != 0 and ch != 1 and ch != 2) {
             imprimirListos();
             imprimirBloqueados();
-            // Impresión de cualquier proceso en bloqueado
-            if(!bloqueado.empty()) {
-                if(bloqueado.front().getTBloqueo() == 0) {
-                    listo.push(bloqueado.front());
-                    bloqueado.pop();
-                } else {
-                    bloqueado.front().sustraerTBloqueo();
-                }
-            }
-            // Impresión del proceso en ejecución
-            cout << "\033[" << 8 << ";54H    " << endl;
-            cout << "\033[" << 9 << ";54H    " << endl;
-            cout << "\033[" << 8 << ";54H" << ejecucion.front().sustraerTRestante() << endl;
-            cout << "\033[" << 9 << ";54H" << ejecucion.front().adherirTTranscurrido() << endl;
-            if(ejecucion.front().getTRestante() == 0) {
-                cout << "\033[2;45H" << tiempoTotal << endl;
-                cout << "\033[" << 8 << ";54H    " << endl;
-                cout << "\033[" << 9 << ";54H    " << endl;
-                cout << "\033[" << 8 << ";54H" << ejecucion.front().getTRestante() << endl;
-                cout << "\033[" << 9 << ";54H" << ejecucion.front().getTTranscurrido() << endl;
-                ch = 2;
-                break;
-            } else {
-                cout << "\033[2;45H" << tiempoTotal++ << endl;
-            }
+            imprimirEjecucion();
+            sleep(1);
             ch = kbhit();
             if(ch == 105 or ch == 73) {
                 ch = 0;
-                break;
             } else if(ch == 101 or ch == 69) {
                 ch = 1;
-                break;
             } else if(ch == 112 or ch == 80) {
                 pausaKbhit();
             } else {
-                ch = -1;
+                // En caso de terminar el proceso CH = 2
+                if(ejecucion.front().getTRestante() == 0){
+                    ch = 2;
+                }
+                else{
+                    cout << "\033[2;45H" << ++tiempoTotal << endl;
+                    ejecucion.front().sustraerTRestante();
+                    ejecucion.front().adherirTTranscurrido();
+                    // Impresión de cualquier proceso en bloqueado
+                    if(!bloqueado.empty()) {
+                        if(bloqueado.front().getTBloqueo() == 0) {
+                            listo.push(bloqueado.front());
+                            bloqueado.pop();
+                        } else {
+                            bloqueado.front().sustraerTBloqueo();
+                        }
+                    }
+                    ch = -1;
+                }
             }
-            sleep(1);
         }
     }
     return ch;
@@ -241,11 +233,14 @@ void Interfaz::imprimirEjecucion() {
         if(ejecucion.empty()) {
             ejecucion.push(listo.front());
             listo.pop();
-            cout <<"\033[" << 6 << ";54H" << ejecucion.front().getId() << endl;
-            cout <<"\033[" << 7 << ";54H" << ejecucion.front().getOperacion() << endl;
-            cout <<"\033[" << 8 << ";54H" << ejecucion.front().getTRestante() << endl;
-            cout <<"\033[" << 9 << ";54H" << ejecucion.front().getTTranscurrido() << endl;
         }
+    }
+    // Imprime en pantalla todo dato que se encuentre dentro de la cola Ejecucion
+    if(!ejecucion.empty()){
+        cout <<"\033[" << 6 << ";54H" << ejecucion.front().getId() << endl;
+        cout <<"\033[" << 7 << ";54H" << ejecucion.front().getOperacion() << endl;
+        cout <<"\033[" << 8 << ";54H" << ejecucion.front().getTRestante() << endl;
+        cout <<"\033[" << 9 << ";54H" << ejecucion.front().getTTranscurrido() << endl;
     }
 }
 

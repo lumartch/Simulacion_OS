@@ -21,8 +21,8 @@ class Proceso {
         void setTEspera(const int & tEspera);
         void setTServicio(const int & tServicio);
         void setTBloqueo(const int & tBloqueado);
-        int adherirTTranscurrido();
-        int sustraerTRestante();
+        void adherirTTranscurrido();
+        void sustraerTRestante();
         int getId();
         int getN1();
         int getN2();

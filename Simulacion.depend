@@ -1,8 +1,9 @@
 # depslib dependency file v1.0
-1551303215 source:/home/lumartch/Simulacion_OS/interfaz.cpp
+1551293531 source:/home/lumartch/Simulacion_OS/main.cpp
+	<iostream>
 	"interfaz.h"
 
-1551293531 /home/lumartch/Simulacion_OS/interfaz.h
+1551305539 /home/lumartch/Simulacion_OS/interfaz.h
 	<iostream>
 	<queue>
 	<ctime>
@@ -18,18 +19,14 @@
 1551293525 /home/lumartch/Simulacion_OS/lote.h
 	"proceso.h"
 
-1551303132 /home/lumartch/Simulacion_OS/proceso.h
+1551303825 /home/lumartch/Simulacion_OS/proceso.h
 	<string>
 	<sstream>
 	<iomanip>
 
-1550489033 source:/home/lumartch/Simulacion_OS/lote.cpp
-	"lote.h"
-
-1551303154 source:/home/lumartch/Simulacion_OS/proceso.cpp
+1551303866 source:/home/lumartch/Simulacion_OS/proceso.cpp
 	"proceso.h"
 
-1551293531 source:/home/lumartch/Simulacion_OS/main.cpp
-	<iostream>
+1551306458 source:/home/lumartch/Simulacion_OS/interfaz.cpp
 	"interfaz.h"
 

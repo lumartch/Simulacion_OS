@@ -23,6 +23,7 @@ class Proceso {
         void setTBloqueo(const int & tBloqueado);
         void adherirTTranscurrido();
         void sustraerTRestante();
+        void sustraerTBloqueo();
         int getId();
         int getN1();
         int getN2();
@@ -38,7 +39,6 @@ class Proceso {
         int getTTranscurrido();
         int getTRestante();
         int getTBloqueo();
-        int sustraerTBloqueo();
     private:
         int id;
         int n1;

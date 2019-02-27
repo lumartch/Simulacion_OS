@@ -38,9 +38,9 @@ class Interfaz {
         queue<Proceso> terminado;
         int index;
         int tiempoTotal;
-        int procesoActual;
         int procesoTotal;
         void generarProcesos(const int &cProcesos);
+        void maxProcesos(const int & pActuales);
         void pantallaDeProcesos();
         void imprimirListos();
         void imprimirEjecucion();

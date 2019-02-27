@@ -1,7 +1,6 @@
 #include "interfaz.h"
 
 Interfaz::Interfaz() {
-    procesoActual = 0;
     procesoTotal = 0;
     tiempoTotal = 0;
     index = 0;
@@ -31,29 +30,22 @@ void Interfaz::menuInicio() {
         cout << "+-----------------------------------------------------------------+" << endl;
         pausa();
     } while(true);
-    //procesoTotal = atoi(cadena.c_str());
     system(CLEAR);
     generarProcesos(atoi(cadena.c_str()));
     pantallaDeProcesos();
-    unsigned int maxProcesos;
-    while(int(terminado.size()) != (procesoActual + procesoTotal)) {
+    unsigned int pActuales = 0;
+    while(int(terminado.size()) != procesoTotal) {
         cout << "\033[2;21H" << nuevo.size() << endl;
         cout << "\033[2;45H" << tiempoTotal << endl;
         sleep(1);
-        maxProcesos = listo.size() + bloqueado.size() + ejecucion.size();
-        if(maxProcesos < 3) {
-            if(!nuevo.empty()) {
-                Proceso p = nuevo.front();
-                listo.push(p);
-                nuevo.pop();
-                cout << "\033[2;21H" << nuevo.size() << endl;
-            }
-        }
-        maxProcesos = listo.size() + bloqueado.size() + ejecucion.size();
-        bool keyboard = false;
-        while(keyboard == false) {
+        pActuales = listo.size() + bloqueado.size() + ejecucion.size();
+        maxProcesos(pActuales);
+        pActuales = listo.size() + bloqueado.size() + ejecucion.size();
+        bool f = false;
+        while(f == false) {
             imprimirListos();
             imprimirEjecucion();
+            maxProcesos(pActuales);
             imprimirTerminados();
             imprimirBloqueados();
             sleep(1);
@@ -65,14 +57,15 @@ void Interfaz::menuInicio() {
                 ejecucion.front().setTBloqueo(10);
                 bloqueado.push(ejecucion.front());
                 ejecucion.pop();
-                keyboard = true;
+                f = true;
             } else if(ch == 1) {
                 /*ERROR*/
                 ejecucion.front().setTBloqueo(0);
                 ejecucion.front().setResultado("ERROR");
+                ejecucion.front().setTFinalizacion(tiempoTotal);
                 terminado.push(ejecucion.front());
                 ejecucion.pop();
-                keyboard = true;
+                f = true;
             } else if(ch == 2) {
                 /*Terminado*/
                 int resultado = 0;
@@ -89,11 +82,12 @@ void Interfaz::menuInicio() {
                 }
                 ejecucion.front().setTBloqueo(0);
                 ejecucion.front().setResultado(to_string(resultado));
+                ejecucion.front().setTFinalizacion(tiempoTotal);
                 terminado.push(ejecucion.front());
                 ejecucion.pop();
-                keyboard = true;
+                f = true;
             } else {
-                keyboard = false;
+                f = false;
             }
         }
     }
@@ -118,22 +112,25 @@ int Interfaz::procesarDatos() {
             if(ch == 112 or ch == 80) {
                 pausaKbhit();
             }
-            cout << "\033[" << 13  << ";52H              " << endl;
-            cout << "\033[" << 13  << ";52H" << bloqueado.front().getTBloqueo() << endl;
             if(bloqueado.front().getTBloqueo() > 0) {
                 cout << "\033[2;45H" << ++tiempoTotal << endl;
                 bloqueado.front().sustraerTBloqueo();
             } else {
+                cout << "\033[2;45H" << tiempoTotal << endl;
+                cout << "\033[" << 13  << ";52H              " << endl;
+                cout << "\033[" << 13  << ";52H" << bloqueado.front().getTBloqueo() << endl;
                 listo.push(bloqueado.front());
                 bloqueado.pop();
                 ch = -1;
                 break;
             }
+            cout << "\033[" << 13  << ";52H              " << endl;
+            cout << "\033[" << 13  << ";52H" << bloqueado.front().getTBloqueo() << endl;
             sleep(1);
         }
     } else {
-        /* Impresión del tiempo transcurrido, tiempo total e incremento del tiempo total */
         while(ch != 0 and ch != 1 and ch != 2) {
+            /* Impresión del tiempo transcurrido, tiempo total e incremento del tiempo total */
             imprimirListos();
             imprimirBloqueados();
             imprimirEjecucion();
@@ -147,10 +144,10 @@ int Interfaz::procesarDatos() {
                 pausaKbhit();
             } else {
                 // En caso de terminar el proceso CH = 2
-                if(ejecucion.front().getTRestante() == 0){
+                if(ejecucion.front().getTRestante() == 0) {
                     ch = 2;
-                }
-                else{
+                } else {
+                    // Se hacen las sustracciones y adhisiones a los tiempos correspondientes
                     cout << "\033[2;45H" << ++tiempoTotal << endl;
                     ejecucion.front().sustraerTRestante();
                     ejecucion.front().adherirTTranscurrido();
@@ -190,6 +187,20 @@ void Interfaz::generarProcesos(const int & cProcesos) {
         nuevo.push(p);
     }
 }
+
+void Interfaz::maxProcesos(const int & pActuales) {
+    if(pActuales < 3) {
+        if(!nuevo.empty()) {
+            Proceso p = nuevo.front();
+            nuevo.front().setTLlegada(tiempoTotal);
+            listo.push(p);
+            nuevo.pop();
+            cout << "\033[2;21H" << nuevo.size() << endl;
+        }
+        sleep(1);
+    }
+}
+
 
 void Interfaz::pantallaDeProcesos() {
     cout << "+-----------------+-------+--------------+---------+" << endl;
@@ -236,7 +247,7 @@ void Interfaz::imprimirEjecucion() {
         }
     }
     // Imprime en pantalla todo dato que se encuentre dentro de la cola Ejecucion
-    if(!ejecucion.empty()){
+    if(!ejecucion.empty()) {
         cout <<"\033[" << 6 << ";54H" << ejecucion.front().getId() << endl;
         cout <<"\033[" << 7 << ";54H" << ejecucion.front().getOperacion() << endl;
         cout <<"\033[" << 8 << ";54H" << ejecucion.front().getTRestante() << endl;

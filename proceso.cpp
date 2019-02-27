@@ -65,6 +65,10 @@ void Proceso::setTServicio(const int& tServicio) {
     this->tRestante = tServicio;
 }
 
+void Proceso::setTBloqueo(const int & tBloqueado) {
+    this->tBloqueado = tBloqueado;
+}
+
 void Proceso::adherirTTranscurrido() {
     tTranscurrido++;
 }
@@ -73,8 +77,8 @@ void Proceso::sustraerTRestante() {
     tRestante--;
 }
 
-void Proceso::setTBloqueo(const int & tBloqueado) {
-    this->tBloqueado = tBloqueado;
+void Proceso::sustraerTBloqueo() {
+    tBloqueado--;
 }
 
 int Proceso::getId() {
@@ -131,10 +135,6 @@ int Proceso::getTRestante() {
 
 int Proceso::getTBloqueo() {
     return tBloqueado;
-}
-
-int Proceso::sustraerTBloqueo() {
-    return --tBloqueado;
 }
 
 std::string Proceso::getOperacion() {

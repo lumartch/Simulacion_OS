@@ -185,7 +185,7 @@ void Interfaz::imprimirEjecucion() {
     if(!listo.empty()) {
         if(ejecucion.empty()) {
             if(listo.front().getTResFlag() == false) {
-                listo.front().setTRespuesta(tiempoTotal);
+                listo.front().setTRespuesta(tiempoTotal - listo.front().getTLlegada());
             }
             ejecucion.push(listo.front());
             listo.pop();
@@ -312,10 +312,9 @@ void Interfaz::imprimirTiempos(){
         // Últimos cálculos
         terminado.front().setTRetorno(terminado.front().getTFinalizacion() - terminado.front().getTLlegada());
         terminado.front().setTEspera(terminado.front().getTRetorno() - terminado.front().getTServicio());
+        cout << "\033[" << 4 + i << ";75H" << terminado.front().getTRespuesta() << endl;
         cout << "\033[" << 4 + i << ";104H" << terminado.front().getTEspera() << endl;
         cout << "\033[" << 4 + i << ";116H" << terminado.front().getTRetorno() << endl;
-
-        //cout << "\033[" << 4 + i << ";75H" << terminado.front().getTRespuesta() << endl;
         terminado.push(terminado.front());
         terminado.pop();
     }

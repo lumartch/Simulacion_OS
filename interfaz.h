@@ -40,7 +40,7 @@ class Interfaz {
         int tiempoTotal;
         int procesoActual;
         int procesoTotal;
-        void generarProcesos();
+        void generarProcesos(const int &cProcesos);
         void pantallaDeProcesos();
         void imprimirListos();
         void imprimirEjecucion();

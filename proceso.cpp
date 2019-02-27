@@ -36,6 +36,10 @@ void Proceso::setOperador(const std::string& operador) {
     this->operador = operador;
 }
 
+void Proceso::setResultado(const std::string& resultado) {
+    this->resultado = resultado;
+}
+
 void Proceso::setTLlegada(const int& tLlegada) {
     this->tLlegada = tLlegada;
 }
@@ -69,8 +73,8 @@ int Proceso::sustraerTRestante() {
     return tRestante--;
 }
 
-void Proceso::setTBloqueo() {
-    this->tBloqueado = 10;
+void Proceso::setTBloqueo(const int & tBloqueado) {
+    this->tBloqueado = tBloqueado;
 }
 
 int Proceso::getId() {
@@ -87,6 +91,10 @@ int Proceso::getN2() {
 
 std::string Proceso::getOperador() {
     return operador;
+}
+
+std::string Proceso::getResultado() {
+    return resultado;
 }
 
 int Proceso::getTLlegada() {

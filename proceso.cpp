@@ -14,6 +14,7 @@ Proceso::Proceso() {
     tTranscurrido = 0;
     tRestante = 0;
     tBloqueado = 0;
+    tResFlag = false;
 }
 
 Proceso::~Proceso() {
@@ -54,6 +55,7 @@ void Proceso::setTRetorno(const int& tRetorno) {
 
 void Proceso::setTRespuesta(const int& tRespuesta) {
     this->tRespuesta = tRespuesta;
+    this->tResFlag = true;
 }
 
 void Proceso::setTEspera(const int& tEspera) {
@@ -135,6 +137,10 @@ int Proceso::getTRestante() {
 
 int Proceso::getTBloqueo() {
     return tBloqueado;
+}
+
+bool Proceso::getTResFlag() {
+    return tResFlag;
 }
 
 std::string Proceso::getOperacion() {

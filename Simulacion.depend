@@ -3,7 +3,7 @@
 	<iostream>
 	"interfaz.h"
 
-1551305539 /home/lumartch/Simulacion_OS/interfaz.h
+1551307227 /home/lumartch/Simulacion_OS/interfaz.h
 	<iostream>
 	<queue>
 	<ctime>
@@ -19,14 +19,14 @@
 1551293525 /home/lumartch/Simulacion_OS/lote.h
 	"proceso.h"
 
-1551303825 /home/lumartch/Simulacion_OS/proceso.h
+1551306906 /home/lumartch/Simulacion_OS/proceso.h
 	<string>
 	<sstream>
 	<iomanip>
 
-1551303866 source:/home/lumartch/Simulacion_OS/proceso.cpp
+1551306953 source:/home/lumartch/Simulacion_OS/proceso.cpp
 	"proceso.h"
 
-1551306458 source:/home/lumartch/Simulacion_OS/interfaz.cpp
+1551309007 source:/home/lumartch/Simulacion_OS/interfaz.cpp
 	"interfaz.h"
 

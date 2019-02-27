@@ -39,14 +39,15 @@ class Interfaz {
         int index;
         int tiempoTotal;
         int procesoTotal;
+        void pantallaDeProcesos();
         void generarProcesos(const int &cProcesos);
         void maxProcesos(const int & pActuales);
-        void pantallaDeProcesos();
         void imprimirListos();
         void imprimirEjecucion();
         void imprimirBloqueados();
         void imprimirTerminados();
         int procesarDatos();
+        void imprimirTiempos();
         void pausa();
         void pausaProceso();
         bool checkNumInt(const string &cadena);

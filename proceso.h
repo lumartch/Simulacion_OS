@@ -39,6 +39,7 @@ class Proceso {
         int getTTranscurrido();
         int getTRestante();
         int getTBloqueo();
+        bool getTResFlag();
     private:
         int id;
         int n1;
@@ -54,6 +55,7 @@ class Proceso {
         int tTranscurrido;
         int tRestante;
         int tBloqueado;
+        bool tResFlag;
 };
 
 #endif // PROCESO_H

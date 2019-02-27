@@ -75,8 +75,20 @@ void Interfaz::menuInicio() {
                 keyboard = true;
             } else if(ch == 2) {
                 /*Terminado*/
+                int resultado = 0;
+                if(ejecucion.front().getOperador() == "+") {
+                    resultado = ejecucion.front().getN1() + ejecucion.front().getN2();
+                } else if(ejecucion.front().getOperador() == "-") {
+                    resultado = ejecucion.front().getN1() - ejecucion.front().getN2();
+                } else if(ejecucion.front().getOperador() == "*") {
+                    resultado = ejecucion.front().getN1() * ejecucion.front().getN2();
+                } else if(ejecucion.front().getOperador() == "/") {
+                    resultado = ejecucion.front().getN1() / ejecucion.front().getN2();
+                } else {
+                    resultado = ejecucion.front().getN1()%ejecucion.front().getN2();
+                }
                 ejecucion.front().setTBloqueo(0);
-                ejecucion.front().setResultado("Hi");
+                ejecucion.front().setResultado(to_string(resultado));
                 terminado.push(ejecucion.front());
                 ejecucion.pop();
                 keyboard = true;
@@ -99,74 +111,70 @@ void Interfaz::menuInicio() {
 }
 
 int Interfaz::procesarDatos() {
-    int ch = kbhit();
-    if(ch == 105 or ch == 73) {
-        ch = 0;
-    } else if(ch == 101 or ch == 69) {
-        ch = 1;
-    } else if(ch == 112 or ch == 80) {
-        pausaKbhit();
-    } else {
-        ch = -1;
-    }
+    int ch = -1;
     if(bloqueado.size() == 3) {
         while(bloqueado.size() == 3) {
+            ch = kbhit();
+            if(ch == 112 or ch == 80) {
+                pausaKbhit();
+            }
             cout << "\033[" << 13  << ";52H              " << endl;
             cout << "\033[" << 13  << ";52H" << bloqueado.front().getTBloqueo() << endl;
-            if(bloqueado.front().getTBloqueo() == 0) {
+            if(bloqueado.front().getTBloqueo() > 0) {
+                cout << "\033[2;45H" << ++tiempoTotal << endl;
+                bloqueado.front().sustraerTBloqueo();
+            } else {
                 listo.push(bloqueado.front());
                 bloqueado.pop();
-            } else {
-                bloqueado.front().sustraerTBloqueo();
+                ch = -1;
+                break;
             }
             sleep(1);
         }
     } else {
         /* Impresión del tiempo transcurrido, tiempo total e incremento del tiempo total */
-        while(ejecucion.front().getTRestante() > 0) {
+        while(ch != 0 and ch != 1 and ch != 2) {
             imprimirListos();
             imprimirBloqueados();
-            ch = kbhit();
-            if(ch == 105 or ch == 73) {
-                return 0;
-            } else if(ch == 101 or ch == 69) {
-                return 1;
-            } else if(ch == 112 or ch == 80) {
-                pausaKbhit();
-            } else {
-                ch = -1;
+            // Impresión de cualquier proceso en bloqueado
+            if(!bloqueado.empty()) {
+                if(bloqueado.front().getTBloqueo() == 0) {
+                    listo.push(bloqueado.front());
+                    bloqueado.pop();
+                } else {
+                    bloqueado.front().sustraerTBloqueo();
+                }
             }
             // Impresión del proceso en ejecución
-            cout << "\033[2;45H" << tiempoTotal << endl;
             cout << "\033[" << 8 << ";54H    " << endl;
             cout << "\033[" << 9 << ";54H    " << endl;
             cout << "\033[" << 8 << ";54H" << ejecucion.front().sustraerTRestante() << endl;
             cout << "\033[" << 9 << ";54H" << ejecucion.front().adherirTTranscurrido() << endl;
-            if(!bloqueado.empty()){
-                if(bloqueado.front().getTBloqueo() == 0){
-                    listo.push(bloqueado.front());
-                    bloqueado.pop();
-                }
-                else{
-                    bloqueado.front().sustraerTBloqueo();
-                }
-            }
-            // Impresión de cualquier proceso en bloqueado
-            sleep(1);
-            if(ejecucion.front().getTRestante() == 0){
-                cout << "\033[2;45H" << ++tiempoTotal << endl;
+            if(ejecucion.front().getTRestante() == 0) {
+                cout << "\033[2;45H" << tiempoTotal << endl;
                 cout << "\033[" << 8 << ";54H    " << endl;
                 cout << "\033[" << 9 << ";54H    " << endl;
                 cout << "\033[" << 8 << ";54H" << ejecucion.front().getTRestante() << endl;
                 cout << "\033[" << 9 << ";54H" << ejecucion.front().getTTranscurrido() << endl;
                 ch = 2;
                 break;
+            } else {
+                cout << "\033[2;45H" << tiempoTotal++ << endl;
             }
-            else{
-                tiempoTotal++;
+            ch = kbhit();
+            if(ch == 105 or ch == 73) {
+                ch = 0;
+                break;
+            } else if(ch == 101 or ch == 69) {
+                ch = 1;
+                break;
+            } else if(ch == 112 or ch == 80) {
+                pausaKbhit();
+            } else {
+                ch = -1;
             }
+            sleep(1);
         }
-
     }
     return ch;
 }
@@ -259,7 +267,7 @@ void Interfaz::imprimirBloqueados() {
 
 void Interfaz::imprimirTerminados() {
     /* Terminados */
-    for(unsigned int i = 0; i < terminado.size(); i++){
+    for(unsigned int i = 0; i < terminado.size(); i++) {
         cout << "\033[" << 8 + i << ";83H                                                                                              " << endl;
         cout << "\033[" << 8 + i << ";82H|      |                                                          |                           |" << endl;
         cout << "\033[" << 8 + i << ";84H" << terminado.front().getId() << endl;
@@ -268,7 +276,7 @@ void Interfaz::imprimirTerminados() {
         terminado.push(terminado.front());
         terminado.pop();
     }
-    if(!terminado.empty()){
+    if(!terminado.empty()) {
         cout << "\033[" << 8 + terminado.size() << ";82H+------+----------------------------------------------------------+---------------------------+" << endl;
     }
 }

@@ -13,6 +13,7 @@ class Proceso {
         void setN1(const int & n1);
         void setN2(const int & n2);
         void setOperador(const std::string&operador);
+        void setTME(const int & tme);
         void setResultado(const std::string& resultado);
         void setTLlegada(const int &tLlegada);
         void setTFinalizacion(const int & tFinalizacion);
@@ -28,6 +29,7 @@ class Proceso {
         int getN1();
         int getN2();
         std::string getOperador();
+        int getTME();
         std::string getResultado();
         std::string getOperacion();
         int getTLlegada();
@@ -45,6 +47,7 @@ class Proceso {
         int n1;
         int n2;
         std::string operador;
+        int tme;
         std::string resultado;
         int tLlegada;
         int tFinalizacion;

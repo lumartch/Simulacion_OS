@@ -33,23 +33,17 @@ void Interfaz::menuInicio() {
     system(CLEAR);
     generarProcesos(atoi(cadena.c_str()));
     pantallaDeProcesos();
-    unsigned int pActuales = 0;
     while(int(terminado.size()) != procesoTotal) {
         cout << "\033[2;21H" << nuevo.size() << endl;
         cout << "\033[2;45H" << tiempoTotal << endl;
         sleep(1);
-        pActuales = listo.size() + bloqueado.size() + ejecucion.size();
-        maxProcesos(pActuales);
-        pActuales = listo.size() + bloqueado.size() + ejecucion.size();
+        maxProcesos();
         bool f = false;
         while(f == false) {
             imprimirListos();
             imprimirEjecucion();
-            maxProcesos(pActuales);
             imprimirTerminados();
             imprimirBloqueados();
-            sleep(1);
-            imprimirListos();
             sleep(1);
             int ch = procesarDatos();
             if(ch == 0) {
@@ -127,19 +121,24 @@ void Interfaz::generarProcesos(const int & cProcesos) {
         } else {
             p.setN2(rand() % -2000 + 1000);
         }
-        p.setTServicio(rand() % 7 + 11);
+        p.setTME(rand() % 7 + 11);
         nuevo.push(p);
     }
 }
 
-void Interfaz::maxProcesos(const int & pActuales) {
-    if(pActuales < 3) {
+void Interfaz::maxProcesos() {
+    unsigned int pActuales = listo.size() + bloqueado.size() + ejecucion.size();
+    while(pActuales < 3) {
+        imprimirListos();
         if(!nuevo.empty()) {
             nuevo.front().setTLlegada(tiempoTotal);
             listo.push(nuevo.front());
             nuevo.pop();
             cout << "\033[2;21H" << nuevo.size() << endl;
+        } else {
+            break;
         }
+        pActuales = listo.size() + bloqueado.size() + ejecucion.size();
         sleep(1);
     }
 }
@@ -168,7 +167,7 @@ void Interfaz::imprimirListos() {
     for(unsigned int i = 0; i < listo.size(); i++) {
         cout << "\033["<< 6 + i << ";1H|      |         |               |" << endl;
         cout << "\033["<< 6 + i << ";3H" << listo.front().getId() << endl;
-        cout << "\033["<< 6 + i << ";10H" << listo.front().getTServicio() << endl;
+        cout << "\033["<< 6 + i << ";10H" << listo.front().getTME() << endl;
         cout << "\033["<< 6 + i << ";20H" << listo.front().getTRestante() << endl;
         cout << "\033["<< 7 + i << ";1H+------+---------+---------------+" << endl;
         listo.push(listo.front());
@@ -277,6 +276,7 @@ int Interfaz::procesarDatos() {
                 } else {
                     // Se hacen las sustracciones y adhisiones a los tiempos correspondientes
                     cout << "\033[2;45H" << ++tiempoTotal << endl;
+                    ejecucion.front().setTServicio(ejecucion.front().getTServicio() + 1);
                     ejecucion.front().sustraerTRestante();
                     ejecucion.front().adherirTTranscurrido();
                     // Impresión de cualquier proceso en bloqueado
@@ -296,12 +296,12 @@ int Interfaz::procesarDatos() {
     return ch;
 }
 
-void Interfaz::imprimirTiempos(){
+void Interfaz::imprimirTiempos() {
     system(CLEAR);
-    cout << "+-----+------------------+-----------------+-----------+----------------+--------------+-------------+-----------+------------+" << endl;
-    cout << "| ID  |    Operación     |    Resultado    | T.Llegada | T.Finalización | T. Respuesta | T. Servicio | T. Espera | T. Retorno |" << endl;
-    cout << "+-----+------------------+-----------------+-----------+----------------+--------------+-------------+-----------+------------+" << endl;
-    for(unsigned int i = 0; i < terminado.size(); i++){
+    cout << "+-----+------------------+-----------------+-----------+----------------+--------------+-------------+-----------+------------+-----+" << endl;
+    cout << "| ID  |    Operación     |    Resultado    | T.Llegada | T.Finalización | T. Respuesta | T. Servicio | T. Espera | T. Retorno | TME |" << endl;
+    cout << "+-----+------------------+-----------------+-----------+----------------+--------------+-------------+-----------+------------+-----+" << endl;
+    for(unsigned int i = 0; i < terminado.size(); i++) {
         cout << "\033[" << 4 + i << ";1H|     |                  |                 |           |                |              |             |           |            |" << endl;
         cout << "\033[" << 4 + i << ";3H" << terminado.front().getId() << endl;
         cout << "\033[" << 4 + i << ";9H" << terminado.front().getOperacion() << endl;
@@ -315,10 +315,11 @@ void Interfaz::imprimirTiempos(){
         cout << "\033[" << 4 + i << ";75H" << terminado.front().getTRespuesta() << endl;
         cout << "\033[" << 4 + i << ";104H" << terminado.front().getTEspera() << endl;
         cout << "\033[" << 4 + i << ";116H" << terminado.front().getTRetorno() << endl;
+        cout << "\033[" << 4 + i << ";129H" << terminado.front().getTME() << endl;
         terminado.push(terminado.front());
         terminado.pop();
     }
-    cout << "\033[" << 4 + terminado.size() << ";1H+-----+------------------+-----------------+-----------+----------------+--------------+-------------+-----------+------------+" << endl;
+    cout << "\033[" << 4 + terminado.size() << ";1H+-----+------------------+-----------------+-----------+----------------+--------------+-------------+-----------+------------+-----+" << endl;
 }
 
 void Interfaz::pausaProceso() {

@@ -37,6 +37,11 @@ void Proceso::setOperador(const std::string& operador) {
     this->operador = operador;
 }
 
+void Proceso::setTME(const int& tme) {
+    this->tme = tme;
+    this->tRestante = tme;
+}
+
 void Proceso::setResultado(const std::string& resultado) {
     this->resultado = resultado;
 }
@@ -64,7 +69,6 @@ void Proceso::setTEspera(const int& tEspera) {
 
 void Proceso::setTServicio(const int& tServicio) {
     this->tServicio = tServicio;
-    this->tRestante = tServicio;
 }
 
 void Proceso::setTBloqueo(const int & tBloqueado) {
@@ -97,6 +101,10 @@ int Proceso::getN2() {
 
 std::string Proceso::getOperador() {
     return operador;
+}
+
+int Proceso::getTME() {
+    return tme;
 }
 
 std::string Proceso::getResultado() {

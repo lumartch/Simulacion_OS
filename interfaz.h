@@ -41,7 +41,7 @@ class Interfaz {
         int procesoTotal;
         void pantallaDeProcesos();
         void generarProcesos(const int &cProcesos);
-        void maxProcesos(const int & pActuales);
+        void maxProcesos();
         void imprimirListos();
         void imprimirEjecucion();
         void imprimirBloqueados();

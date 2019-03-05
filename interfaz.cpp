@@ -233,15 +233,20 @@ void Interfaz::imprimirTerminados() {
 
 int Interfaz::procesarDatos() {
     int ch = -1;
-    if(bloqueado.size() == 3) {
-        while(bloqueado.size() == 3) {
+    if(listo.empty() and ejecucion.empty() and !bloqueado.empty()) {
+        while(true) {
             ch = kbhit();
             if(ch == 112 or ch == 80) {
                 pausaKbhit();
             }
             if(bloqueado.front().getTBloqueo() > 0) {
+                for(unsigned int i = 0; i < bloqueado.size(); i++) {
+                    bloqueado.front().sustraerTBloqueo();
+                    bloqueado.push(bloqueado.front());
+                    bloqueado.pop();
+                }
+                imprimirBloqueados();
                 cout << "\033[2;45H" << ++tiempoTotal << endl;
-                bloqueado.front().sustraerTBloqueo();
             } else {
                 cout << "\033[2;45H" << tiempoTotal << endl;
                 cout << "\033[" << 13  << ";52H              " << endl;
@@ -251,8 +256,6 @@ int Interfaz::procesarDatos() {
                 ch = -1;
                 break;
             }
-            cout << "\033[" << 13  << ";52H              " << endl;
-            cout << "\033[" << 13  << ";52H" << bloqueado.front().getTBloqueo() << endl;
             sleep(1);
         }
     } else {
@@ -285,7 +288,11 @@ int Interfaz::procesarDatos() {
                             listo.push(bloqueado.front());
                             bloqueado.pop();
                         } else {
-                            bloqueado.front().sustraerTBloqueo();
+                            for(unsigned int i = 0; i < bloqueado.size(); i++) {
+                                bloqueado.front().sustraerTBloqueo();
+                                bloqueado.push(bloqueado.front());
+                                bloqueado.pop();
+                            }
                         }
                     }
                     ch = -1;

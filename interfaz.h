@@ -39,6 +39,8 @@ class Interfaz {
         int index;
         int tiempoTotal;
         int procesoTotal;
+        int quantum;
+        int contQuantum;
         void pantallaDeProcesos();
         void generarProcesos(const int &cProcesos);
         void maxProcesos();

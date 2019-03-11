@@ -4,6 +4,7 @@ Interfaz::Interfaz() {
     procesoTotal = 0;
     tiempoTotal = 0;
     index = 0;
+    quantum = 0;
     menuInicio();
 }
 
@@ -12,7 +13,7 @@ Interfaz::~Interfaz() {
 }
 
 void Interfaz::menuInicio() {
-    string cadena;
+    string cadena, quan;
     do {
         system(CLEAR);
         cout << "+-------------------------------+--------------+------------------+" << endl;
@@ -23,20 +24,40 @@ void Interfaz::menuInicio() {
         cout << "\033[4;44H";
         getline(cin, cadena);
         if(checkNumInt(cadena)) {
+            do {
+                cout << "\033[5;1H| Ingrese el valor del Quantum:                                   |" << endl;
+                cout << "\033[6;1H+-----------------------------------------------------------------+" << endl;
+                cout << "\033[5;33H";
+                getline(cin, quan);
+                if(checkNumInt(quan)) {
+                    break;
+                } else {
+                    cout << "+-----------------------------------------------------------------+" << endl;
+                    cout << "| Ha introducido un número o carácter inválido. Intente de nuevo. |" << endl;
+                    cout << "+-----------------------------------------------------------------+" << endl;
+                    pausaProceso();
+                    cout << "\033[7;1H                                                                   " << endl;
+                    cout << "\033[8;1H                                                                   " << endl;
+                    cout << "\033[9;1H                                                                   " << endl;
+                }
+            } while(true);
             break;
         }
         cout << "+-----------------------------------------------------------------+" << endl;
         cout << "| Ha introducido un número o carácter inválido. Intente de nuevo. |" << endl;
         cout << "+-----------------------------------------------------------------+" << endl;
-        pausa();
+        pausaProceso();
     } while(true);
     system(CLEAR);
     generarProcesos(atoi(cadena.c_str()));
+    quantum = atoi(quan.c_str());
     pantallaDeProcesos();
     while(int(terminado.size()) != procesoTotal) {
         cout << "\033[2;21H    " << endl;
         cout << "\033[2;21H" << nuevo.size() << endl;
         cout << "\033[2;45H" << tiempoTotal << endl;
+        cout << "\033[2;65H    " << endl;
+        cout << "\033[2;65H" << contQuantum << endl;
         sleep(1);
         maxProcesos();
         bool f = false;
@@ -52,6 +73,7 @@ void Interfaz::menuInicio() {
                 ejecucion.front().setTBloqueo(10);
                 bloqueado.push(ejecucion.front());
                 ejecucion.pop();
+                contQuantum = 0;
                 f = true;
             } else if(ch == 1) {
                 /*ERROR*/
@@ -62,6 +84,7 @@ void Interfaz::menuInicio() {
                 ejecucion.front().setTEspera(ejecucion.front().getTRetorno() - ejecucion.front().getTServicio());
                 terminado.push(ejecucion.front());
                 ejecucion.pop();
+                contQuantum = 0;
                 f = true;
             } else if(ch == 2) {
                 /*Terminado*/
@@ -85,7 +108,14 @@ void Interfaz::menuInicio() {
                 ejecucion.front().setTEspera(ejecucion.front().getTRetorno() - ejecucion.front().getTServicio());
                 terminado.push(ejecucion.front());
                 ejecucion.pop();
+                contQuantum = 0;
                 f = true;
+            } else if(ch == 3) {
+                listo.push(ejecucion.front());
+                ejecucion.pop();
+                contQuantum = 0;
+                cout << "\033[2;65H    " << endl;
+                cout << "\033[2;65H" << contQuantum << endl;
             } else {
                 f = false;
             }
@@ -151,9 +181,9 @@ void Interfaz::maxProcesos() {
 }
 
 void Interfaz::pantallaDeProcesos() {
-    cout << "+-----------------+-------+--------------+---------+" << endl;
-    cout << "| Procesos nuevos |       | Tiempo Total |         |" << endl;
-    cout << "+------+---------++-------+------+-------+---------+-----------------------------+---------------------------------------------------------------------------------------------+" << endl;
+    cout << "+-----------------+-------+--------------+---------+----------+-------+" << endl;
+    cout << "| Procesos nuevos |       | Tiempo Total |         | QUANTUM  |       |" << endl;
+    cout << "+------+---------++-------+------+-------+---------+----------+-------+----------+---------------------------------------------------------------------------------------------+" << endl;
     cout << "|  ID  |  T.M.E  |  T.Restante   |                Ejecucion                      |                                             Terminados                                      |" << endl;
     cout << "+------+---------+---------------+-----------------+-----------------------------+------+----------------------------------------------------------+---------------------------+" << endl;
     cout << "                                 | ID Programa     |                             | ID   |        Operación                                         |          Resultado        |" << endl;
@@ -250,7 +280,7 @@ int Interfaz::procesarDatos() {
                 maxProcesos();
                 imprimirListos();
                 cout << "\033[2;21H" << nuevo.size() << endl;
-                if(bloqueado.size() < 3){
+                if(bloqueado.size() < 3) {
                     break;
                 }
             } else if(ch == 116 or ch == 84) {
@@ -278,7 +308,7 @@ int Interfaz::procesarDatos() {
             sleep(1);
         }
     } else {
-        while(ch != 0 and ch != 1 and ch != 2) {
+        while(ch != 0 and ch != 1 and ch != 2 and ch != 3) {
             /* Impresión del tiempo transcurrido, tiempo total e incremento del tiempo total */
             imprimirListos();
             imprimirBloqueados();
@@ -295,33 +325,40 @@ int Interfaz::procesarDatos() {
                 generarProcesos(1);
                 maxProcesos();
                 imprimirListos();
+                cout << "\033[2;21H    " << endl;
                 cout << "\033[2;21H" << nuevo.size() << endl;
             } else if(ch == 116 or ch == 84) {
                 imprimirTiemposActual();
             } else {
-                // En caso de terminar el proceso CH = 2
-                if(ejecucion.front().getTRestante() == 0) {
-                    ch = 2;
-                } else {
-                    // Se hacen las sustracciones y adhisiones a los tiempos correspondientes
-                    cout << "\033[2;45H" << ++tiempoTotal << endl;
-                    ejecucion.front().setTServicio(ejecucion.front().getTServicio() + 1);
-                    ejecucion.front().sustraerTRestante();
-                    ejecucion.front().adherirTTranscurrido();
-                    // Impresión de cualquier proceso en bloqueado
-                    if(!bloqueado.empty()) {
-                        if(bloqueado.front().getTBloqueo() == 0) {
-                            listo.push(bloqueado.front());
-                            bloqueado.pop();
-                        } else {
-                            for(unsigned int i = 0; i < bloqueado.size(); i++) {
-                                bloqueado.front().sustraerTBloqueo();
-                                bloqueado.push(bloqueado.front());
+                // Condicionante para trabajar bajo el quantum
+                if(contQuantum != quantum) {
+                    // En caso de terminar el proceso CH = 2
+                    if(ejecucion.front().getTRestante() == 0) {
+                        ch = 2;
+                    } else {
+                        // Se hacen las sustracciones y adhisiones a los tiempos correspondientes
+                        cout << "\033[2;45H" << ++tiempoTotal << endl;
+                        cout << "\033[2;65H" << ++contQuantum << endl;
+                        ejecucion.front().setTServicio(ejecucion.front().getTServicio() + 1);
+                        ejecucion.front().sustraerTRestante();
+                        ejecucion.front().adherirTTranscurrido();
+                        // Impresión de cualquier proceso en bloqueado
+                        if(!bloqueado.empty()) {
+                            if(bloqueado.front().getTBloqueo() == 0) {
+                                listo.push(bloqueado.front());
                                 bloqueado.pop();
+                            } else {
+                                for(unsigned int i = 0; i < bloqueado.size(); i++) {
+                                    bloqueado.front().sustraerTBloqueo();
+                                    bloqueado.push(bloqueado.front());
+                                    bloqueado.pop();
+                                }
                             }
                         }
+                        ch = -1;
                     }
-                    ch = -1;
+                } else {
+                    ch = 3;
                 }
             }
         }
@@ -434,9 +471,9 @@ void Interfaz::imprimirTiemposFinal() {
 void Interfaz::pausaProceso() {
     cout << "\033[20;1H" << endl << endl;
     cout << "Presione [enter] para continuar...";
-    cin.get();
+    while(getchar() != 10);
     cout << "\033[20;1H" << endl << endl;
-    cout << "                                   ";
+    cout << "                                   " << endl;
 }
 
 void Interfaz::pausa() {

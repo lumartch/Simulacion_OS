@@ -47,7 +47,9 @@ class Interfaz {
         void imprimirBloqueados();
         void imprimirTerminados();
         int procesarDatos();
-        void imprimirTiempos();
+        void imprimirTiemposFinal();
+        void imprimirTiemposActual();
+        void datosTiempoActual(queue<Proceso>& q, const string &n, unsigned int &i);
         void pausa();
         void pausaProceso();
         bool checkNumInt(const string &cadena);

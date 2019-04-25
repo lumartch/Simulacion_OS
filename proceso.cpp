@@ -75,6 +75,14 @@ void Proceso::setTBloqueo(const int & tBloqueado) {
     this->tBloqueado = tBloqueado;
 }
 
+void Proceso::setTTranscurrido(const int& tTranscurrido) {
+    this->tTranscurrido = tTranscurrido;
+}
+
+void Proceso::setTRestante(const int& tRestante) {
+    this->tRestante = tRestante;
+}
+
 void Proceso::adherirTTranscurrido() {
     tTranscurrido++;
 }
@@ -169,3 +177,11 @@ int Proceso::getTamanio() {
     return tamanio;
 }
 
+std::string Proceso::toString() {
+    std::string r = "";
+    r += std::to_string(id) + "|" + std::to_string(n1) + "|" + std::to_string(n2) + "|" + operador + "|" + std::to_string(tme) + "|" + resultado + "|";
+    r += std::to_string(tLlegada) + "|" + std::to_string(tFinalizacion) + "|" + std::to_string(tRetorno) + "|" + std::to_string(tRespuesta) + "|";
+    r += std::to_string(tEspera) + "|" + std::to_string(tServicio) + "|" + std::to_string(tTranscurrido) + "|" + std::to_string(tRestante) + "|";
+    r += std::to_string(tBloqueado) + "|" + std::to_string(tResFlag) + "|" + std::to_string(tamanio) + "\n";
+    return r;
+}

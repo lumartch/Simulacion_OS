@@ -22,6 +22,8 @@ class Proceso {
         void setTEspera(const int & tEspera);
         void setTServicio(const int & tServicio);
         void setTBloqueo(const int & tBloqueado);
+        void setTTranscurrido(const int &tTranscurrido);
+        void setTRestante(const int &tRestante);
         void adherirTTranscurrido();
         void sustraerTRestante();
         void sustraerTBloqueo();
@@ -44,6 +46,7 @@ class Proceso {
         int getTBloqueo();
         bool getTResFlag();
         int getTamanio();
+        std::string toString();
     private:
         int id;
         int n1;

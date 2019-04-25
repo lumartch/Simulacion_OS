@@ -20,6 +20,8 @@
 #include <cstdlib>
 #include <cstdio>
 #include <fcntl.h>
+/* Librerías para el guardado de archivos */
+#include <fstream>
 /* Tipo de dato creados */
 #include "lote.h"
 

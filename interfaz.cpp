@@ -138,6 +138,7 @@ void Interfaz::menuInicio() {
                 contQuantum = 0;
                 cout << "\033[2;100H    " << endl;
                 cout << "\033[2;100H" << contQuantum << endl;
+                imprimirMemoria();
             } else {
                 f = false;
             }
@@ -251,9 +252,9 @@ void Interfaz::pantallaDeProcesos() {
     cout << "                                 | ID Bloqueado  |  T. de bloqueo |" << endl;
     cout << "                                 +---------------+----------------+" << endl;
     cout << "\033[31;0H";
-    cout << "+---------------+---------+-------+-----------+-------+-----------+-------+" << endl;
-    cout << "|    Memoria    | M.Libre |       | M.Ocupada |       | Marcos D. |       |" << endl;
-    cout << "+----------+----+----+----+----+--+-+----+----+----+--+-+----+----+----+--+-+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+" << endl;
+    cout << "+---------------+---------+-------+-----------+-------+-----------+-------+                     +---------+-------+------+--------+" << endl;
+    cout << "|    Memoria    | M.Libre |       | M.Ocupada |       | Marcos D. |       |                     | ID. SUS |       | TAM  |        |" << endl;
+    cout << "+----------+----+----+----+----+--+-+----+----+----+--+-+----+----+----+--+-+----+----+----+----+----+----+----+--+-+----+----+---++----+----+----+----+----+----+----+----+----+----+----+----+" << endl;
     cout << "|  Página  |  0 |  1 |  2 |  3 |  4 |  5 |  6 |  7 |  8 |  9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20 | 21 | 22 | 23 | 24 | 25 | 26 | 27 | 28 | 29 | 30 | 31 | 32 | 33 | 34 | 35 |" << endl;
     cout << "+----------+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+" << endl;
     cout << "|  Tamaño  |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |" << endl;
@@ -369,10 +370,210 @@ int Interfaz::procesarDatos() {
                     cout << "\033[2;54H" << nuevo.front().getTamanio() << endl;
 
                 }
-            } else if(ch == 116 or ch == 84) {
-                /*if(bloqueado.size() < 3) {
-                    break;
-                }*/
+                break;
+            } else if(ch == 115 or ch == 83) {
+                /// Bloqueado suspendido
+                if(!bloqueado.empty()) {
+                    fstream fout("Bloqueado-Suspendido.txt", ios::app);
+                    fout << bloqueado.front().toString();
+                    fout.close();
+                    liberarMemoria(bloqueado.front().getId());
+                    bloqueado.pop();
+                    ifstream fin("Bloqueado-Suspendido.txt");
+                    Proceso p;
+                    string str;
+                    if(fin.good()){
+                        getline(fin, str, '|');
+                        p.setId(atoi(str.c_str()));
+                        getline(fin, str, '|');
+                        p.setN1(atoi(str.c_str()));
+                        getline(fin, str, '|');
+                        p.setN2(atoi(str.c_str()));
+                        getline(fin, str, '|');
+                        p.setOperador(str);
+                        getline(fin, str, '|');
+                        p.setTME(atoi(str.c_str()));
+                        getline(fin, str, '|');
+                        p.setResultado(str);
+                        getline(fin, str, '|');
+                        p.setTLlegada(atoi(str.c_str()));
+                        getline(fin, str, '|');
+                        p.setTFinalizacion(atoi(str.c_str()));
+                        getline(fin, str, '|');
+                        p.setTRetorno(atoi(str.c_str()));
+                        getline(fin, str, '|');
+                        p.setTRespuesta(atoi(str.c_str()));
+                        getline(fin, str, '|');
+                        p.setTEspera(atoi(str.c_str()));
+                        getline(fin, str, '|');
+                        p.setTServicio(atoi(str.c_str()));
+                        getline(fin, str, '|');
+                        p.setTTranscurrido(atoi(str.c_str()));
+                        getline(fin, str, '|');
+                        p.setTRestante(atoi(str.c_str()));
+                        getline(fin, str, '|');
+                        p.setTBloqueo(atoi(str.c_str()));
+                        getline(fin, str, '|');
+                        getline(fin, str, '\n');
+                        p.setTamanio(atoi(str.c_str()));
+                        cout << "\033[32;109H   " << endl;
+                        cout << "\033[32;109H" << p.getId() << endl;
+                        cout << "\033[32;124H   " << endl;
+                        cout << "\033[32;124H" << p.getTamanio() << endl;
+                    }
+                    fin.close();
+                }
+                maxProcesos();
+                imprimirListos();
+                imprimirBloqueados();
+                imprimirMemoria();
+            } else if(ch == 114 or ch == 82) {
+                /// Regresa
+                ifstream fileIn("Bloqueado-Suspendido.txt");
+                Proceso p;
+                string str;
+                if(fileIn.good()){
+                    getline(fileIn, str, '|');
+                    p.setId(atoi(str.c_str()));
+                    getline(fileIn, str, '|');
+                    p.setN1(atoi(str.c_str()));
+                    getline(fileIn, str, '|');
+                    p.setN2(atoi(str.c_str()));
+                    getline(fileIn, str, '|');
+                    p.setOperador(str);
+                    getline(fileIn, str, '|');
+                    p.setTME(atoi(str.c_str()));
+                    getline(fileIn, str, '|');
+                    p.setResultado(str);
+                    getline(fileIn, str, '|');
+                    p.setTLlegada(atoi(str.c_str()));
+                    getline(fileIn, str, '|');
+                    p.setTFinalizacion(atoi(str.c_str()));
+                    getline(fileIn, str, '|');
+                    p.setTRetorno(atoi(str.c_str()));
+                    getline(fileIn, str, '|');
+                    p.setTRespuesta(atoi(str.c_str()));
+                    getline(fileIn, str, '|');
+                    p.setTEspera(atoi(str.c_str()));
+                    getline(fileIn, str, '|');
+                    p.setTServicio(atoi(str.c_str()));
+                    getline(fileIn, str, '|');
+                    p.setTTranscurrido(atoi(str.c_str()));
+                    getline(fileIn, str, '|');
+                    p.setTRestante(atoi(str.c_str()));
+                    getline(fileIn, str, '|');
+                    p.setTBloqueo(atoi(str.c_str()));
+                    getline(fileIn, str, '|');
+                    getline(fileIn, str, '\n');
+                    p.setTamanio(atoi(str.c_str()));
+                    cout << "\033[32;109H   " << endl;
+                    cout << "\033[32;109H" << p.getId() << endl;
+                    cout << "\033[32;124H   " << endl;
+                    cout << "\033[32;124H" << p.getTamanio() << endl;
+                }
+                fileIn.close();
+                if(p.getId() != -1111){
+                	int noPaginas = (p.getTamanio() * 10)/5;
+			        if(noPaginas%5 == 0) {
+			            noPaginas = (noPaginas/10);
+			        } else {
+			            noPaginas = (noPaginas/10) + 1;
+			        }
+			        if(pagDis >= noPaginas) {
+			            mLibre -= p.getTamanio();
+			            mUsada += p.getTamanio();
+			            pagDis -= noPaginas;
+			            for(int i = 0, tamanio = p.getTamanio(); i < 34 and noPaginas > 0; i++) {
+			                if(m[i].ocupado == false) {
+			                    noPaginas--;
+			                    m[i].ocupado = true;
+			                    m[i].estado = 'B';
+			                    m[i].idProceso = p.getId();
+			                    if(tamanio > 5) {
+			                        tamanio -= 5;
+			                        m[i].tUsado += 5;
+			                    } else {
+			                        m[i].tUsado += tamanio;
+			                        break;
+			                    }
+			                }
+			            }
+			            ///
+		                ifstream fin("Bloqueado-Suspendido.txt");
+		                ofstream fout("temporal.txt");
+                        bool f = false;
+		                if(fin.good()){
+		                    int i = 0;
+		                    while(!fin.eof()){
+		                        f = true;
+		                        getline(fin, str, '|');
+		                        p.setId(atoi(str.c_str()));
+		                        getline(fin, str, '|');
+		                        p.setN1(atoi(str.c_str()));
+		                        getline(fin, str, '|');
+		                        p.setN2(atoi(str.c_str()));
+		                        getline(fin, str, '|');
+		                        p.setOperador(str);
+		                        getline(fin, str, '|');
+		                        p.setTME(atoi(str.c_str()));
+		                        getline(fin, str, '|');
+		                        p.setResultado(str);
+		                        getline(fin, str, '|');
+		                        p.setTLlegada(atoi(str.c_str()));
+		                        getline(fin, str, '|');
+		                        p.setTFinalizacion(atoi(str.c_str()));
+		                        getline(fin, str, '|');
+		                        p.setTRetorno(atoi(str.c_str()));
+		                        getline(fin, str, '|');
+		                        p.setTRespuesta(atoi(str.c_str()));
+		                        getline(fin, str, '|');
+		                        p.setTEspera(atoi(str.c_str()));
+		                        getline(fin, str, '|');
+		                        p.setTServicio(atoi(str.c_str()));
+		                        getline(fin, str, '|');
+		                        p.setTTranscurrido(atoi(str.c_str()));
+		                        getline(fin, str, '|');
+		                        p.setTRestante(atoi(str.c_str()));
+		                        getline(fin, str, '|');
+		                        p.setTBloqueo(atoi(str.c_str()));
+		                        getline(fin, str, '|');
+		                        getline(fin, str, '\n');
+		                        p.setTamanio(atoi(str.c_str()));
+		                        if(fin.eof()){
+		                            break;
+		                        }
+		                        if(i == 0){
+		                            bloqueado.push(p);
+		                        }
+		                        else if(i == 1){
+		                            ///
+		                            cout << "\033[32;109H   " << endl;
+		                            cout << "\033[32;109H" << p.getId() << endl;
+		                            cout << "\033[32;124H   " << endl;
+		                            cout << "\033[32;124H" << p.getTamanio() << endl;
+		                            fout << p.toString();
+		                        }
+		                        else {
+		                            fout << p.toString();
+		                        }
+		                        i++;
+		                    }
+		                }
+		                fin.close();
+		                fout.close();
+		                remove("Bloqueado-Suspendido.txt");
+		                rename("temporal.txt", "Bloqueado-Suspendido.txt");
+		                if(f == false){
+		                    cout << "\033[32;109H   " << endl;
+		                    cout << "\033[32;124H   " << endl;
+		                    cout << "\033[32;109H0" << endl;
+		                    cout << "\033[32;124H0" << endl;
+		                }
+			            imprimirListos();
+			            imprimirMemoria();
+			            sleep(1);
+			        }
+                }
             } else if(ch == 116 or ch == 84) {
                 imprimirTiemposActual();
             }
@@ -400,6 +601,10 @@ int Interfaz::procesarDatos() {
             cout << "\033[" << 13  << ";52H" << bloqueado.front().getTBloqueo() << endl;
             sleep(1);
         }
+    } else if(nuevo.empty() and listo.empty() and bloqueado.empty() and ejecucion.empty()){
+        while(true){
+            cout << "Hola" << endl;
+        }
     } else {
         while(ch != 0 and ch != 1 and ch != 2 and ch != 3) {
             /* Impresión del tiempo transcurrido, tiempo total e incremento del tiempo total */
@@ -415,6 +620,209 @@ int Interfaz::procesarDatos() {
                 ch = 1;
             } else if(ch == 112 or ch == 80 or ch == 77 or ch == 109) {
                 pausaKbhit();
+            } else if(ch == 115 or ch == 83) {
+                /// Bloqueado suspendido
+                if(!bloqueado.empty()) {
+                    fstream fout("Bloqueado-Suspendido.txt", ios::app);
+                    fout << bloqueado.front().toString();
+                    fout.close();
+                    liberarMemoria(bloqueado.front().getId());
+                    bloqueado.pop();
+                    ifstream fin("Bloqueado-Suspendido.txt");
+                    Proceso p;
+                    string str;
+                    if(fin.good()){
+                        getline(fin, str, '|');
+                        p.setId(atoi(str.c_str()));
+                        getline(fin, str, '|');
+                        p.setN1(atoi(str.c_str()));
+                        getline(fin, str, '|');
+                        p.setN2(atoi(str.c_str()));
+                        getline(fin, str, '|');
+                        p.setOperador(str);
+                        getline(fin, str, '|');
+                        p.setTME(atoi(str.c_str()));
+                        getline(fin, str, '|');
+                        p.setResultado(str);
+                        getline(fin, str, '|');
+                        p.setTLlegada(atoi(str.c_str()));
+                        getline(fin, str, '|');
+                        p.setTFinalizacion(atoi(str.c_str()));
+                        getline(fin, str, '|');
+                        p.setTRetorno(atoi(str.c_str()));
+                        getline(fin, str, '|');
+                        p.setTRespuesta(atoi(str.c_str()));
+                        getline(fin, str, '|');
+                        p.setTEspera(atoi(str.c_str()));
+                        getline(fin, str, '|');
+                        p.setTServicio(atoi(str.c_str()));
+                        getline(fin, str, '|');
+                        p.setTTranscurrido(atoi(str.c_str()));
+                        getline(fin, str, '|');
+                        p.setTRestante(atoi(str.c_str()));
+                        getline(fin, str, '|');
+                        p.setTBloqueo(atoi(str.c_str()));
+                        getline(fin, str, '|');
+                        getline(fin, str, '\n');
+                        p.setTamanio(atoi(str.c_str()));
+                        cout << "\033[32;109H   " << endl;
+                        cout << "\033[32;109H" << p.getId() << endl;
+                        cout << "\033[32;124H   " << endl;
+                        cout << "\033[32;124H" << p.getTamanio() << endl;
+                    }
+                    fin.close();
+                    maxProcesos();
+                    imprimirListos();
+                    imprimirBloqueados();
+                    imprimirMemoria();
+                }
+            } else if(ch == 114 or ch == 82) {
+                /// Regresa
+                ifstream fileIn("Bloqueado-Suspendido.txt");
+                Proceso p;
+                string str;
+                if(fileIn.good()){
+                    getline(fileIn, str, '|');
+                    p.setId(atoi(str.c_str()));
+                    getline(fileIn, str, '|');
+                    p.setN1(atoi(str.c_str()));
+                    getline(fileIn, str, '|');
+                    p.setN2(atoi(str.c_str()));
+                    getline(fileIn, str, '|');
+                    p.setOperador(str);
+                    getline(fileIn, str, '|');
+                    p.setTME(atoi(str.c_str()));
+                    getline(fileIn, str, '|');
+                    p.setResultado(str);
+                    getline(fileIn, str, '|');
+                    p.setTLlegada(atoi(str.c_str()));
+                    getline(fileIn, str, '|');
+                    p.setTFinalizacion(atoi(str.c_str()));
+                    getline(fileIn, str, '|');
+                    p.setTRetorno(atoi(str.c_str()));
+                    getline(fileIn, str, '|');
+                    p.setTRespuesta(atoi(str.c_str()));
+                    getline(fileIn, str, '|');
+                    p.setTEspera(atoi(str.c_str()));
+                    getline(fileIn, str, '|');
+                    p.setTServicio(atoi(str.c_str()));
+                    getline(fileIn, str, '|');
+                    p.setTTranscurrido(atoi(str.c_str()));
+                    getline(fileIn, str, '|');
+                    p.setTRestante(atoi(str.c_str()));
+                    getline(fileIn, str, '|');
+                    p.setTBloqueo(atoi(str.c_str()));
+                    getline(fileIn, str, '|');
+                    getline(fileIn, str, '\n');
+                    p.setTamanio(atoi(str.c_str()));
+                    cout << "\033[32;109H   " << endl;
+                    cout << "\033[32;109H" << p.getId() << endl;
+                    cout << "\033[32;124H   " << endl;
+                    cout << "\033[32;124H" << p.getTamanio() << endl;
+                }
+                fileIn.close();
+                if(p.getId() != -1111){
+                	int noPaginas = (p.getTamanio() * 10)/5;
+			        if(noPaginas%5 == 0) {
+			            noPaginas = (noPaginas/10);
+			        } else {
+			            noPaginas = (noPaginas/10) + 1;
+			        }
+			        if(pagDis >= noPaginas) {
+			            mLibre -= p.getTamanio();
+			            mUsada += p.getTamanio();
+			            pagDis -= noPaginas;
+			            for(int i = 0, tamanio = p.getTamanio(); i < 34 and noPaginas > 0; i++) {
+			                if(m[i].ocupado == false) {
+			                    noPaginas--;
+			                    m[i].ocupado = true;
+			                    m[i].estado = 'B';
+			                    m[i].idProceso = p.getId();
+			                    if(tamanio > 5) {
+			                        tamanio -= 5;
+			                        m[i].tUsado += 5;
+			                    } else {
+			                        m[i].tUsado += tamanio;
+			                        break;
+			                    }
+			                }
+			            }
+			            ///
+		                ifstream fin("Bloqueado-Suspendido.txt");
+		                ofstream fout("temporal.txt");
+                        bool f = false;
+		                if(fin.good()){
+		                    int i = 0;
+		                    while(!fin.eof()){
+		                        f = true;
+		                        getline(fin, str, '|');
+		                        p.setId(atoi(str.c_str()));
+		                        getline(fin, str, '|');
+		                        p.setN1(atoi(str.c_str()));
+		                        getline(fin, str, '|');
+		                        p.setN2(atoi(str.c_str()));
+		                        getline(fin, str, '|');
+		                        p.setOperador(str);
+		                        getline(fin, str, '|');
+		                        p.setTME(atoi(str.c_str()));
+		                        getline(fin, str, '|');
+		                        p.setResultado(str);
+		                        getline(fin, str, '|');
+		                        p.setTLlegada(atoi(str.c_str()));
+		                        getline(fin, str, '|');
+		                        p.setTFinalizacion(atoi(str.c_str()));
+		                        getline(fin, str, '|');
+		                        p.setTRetorno(atoi(str.c_str()));
+		                        getline(fin, str, '|');
+		                        p.setTRespuesta(atoi(str.c_str()));
+		                        getline(fin, str, '|');
+		                        p.setTEspera(atoi(str.c_str()));
+		                        getline(fin, str, '|');
+		                        p.setTServicio(atoi(str.c_str()));
+		                        getline(fin, str, '|');
+		                        p.setTTranscurrido(atoi(str.c_str()));
+		                        getline(fin, str, '|');
+		                        p.setTRestante(atoi(str.c_str()));
+		                        getline(fin, str, '|');
+		                        p.setTBloqueo(atoi(str.c_str()));
+		                        getline(fin, str, '|');
+		                        getline(fin, str, '\n');
+		                        p.setTamanio(atoi(str.c_str()));
+		                        if(fin.eof()){
+		                            break;
+		                        }
+		                        if(i == 0){
+		                            bloqueado.push(p);
+		                        }
+		                        else if(i == 1){
+		                            ///
+		                            cout << "\033[32;109H   " << endl;
+		                            cout << "\033[32;109H" << p.getId() << endl;
+		                            cout << "\033[32;124H   " << endl;
+		                            cout << "\033[32;124H" << p.getTamanio() << endl;
+		                            fout << p.toString();
+		                        }
+		                        else {
+		                            fout << p.toString();
+		                        }
+		                        i++;
+		                    }
+		                }
+		                fin.close();
+		                fout.close();
+		                remove("Bloqueado-Suspendido.txt");
+		                rename("temporal.txt", "Bloqueado-Suspendido.txt");
+		                if(f == false){
+		                    cout << "\033[32;109H   " << endl;
+		                    cout << "\033[32;124H   " << endl;
+		                    cout << "\033[32;109H0" << endl;
+		                    cout << "\033[32;124H0" << endl;
+		                }
+			            imprimirBloqueados();
+			            imprimirMemoria();
+			            sleep(1);
+			        }
+                }
             } else if(ch == 78 or ch == 110) {
                 generarProcesos(1);
                 maxProcesos();
@@ -458,6 +866,7 @@ int Interfaz::procesarDatos() {
                         if(!bloqueado.empty()) {
                             if(bloqueado.front().getTBloqueo() == 0) {
                                 listo.push(bloqueado.front());
+                                asignarEstado(bloqueado.front().getId(), 'L');
                                 bloqueado.pop();
                             } else {
                                 for(unsigned int i = 0; i < bloqueado.size(); i++) {
@@ -511,7 +920,7 @@ void Interfaz::imprimirTiemposActual() {
         cout << "\033[2;54H" << nuevo.front().getTamanio() << endl;
 
     }
-        //
+    //
     cout << "\033[32;29H    " << endl;
     cout << "\033[32;29H" << mLibre << endl;
     cout << "\033[32;49H    "<< endl;
@@ -622,7 +1031,7 @@ void Interfaz::imprimirTiemposFinal() {
 }
 
 void Interfaz::imprimirMemoria() {
-        //
+    //
     cout << "\033[32;29H    " << endl;
     cout << "\033[32;29H" << mLibre << endl;
     cout << "\033[32;49H    "<< endl;

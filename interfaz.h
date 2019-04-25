@@ -43,10 +43,13 @@ class Interfaz {
         int contQuantum;
         struct Memoria{
             int tUsado = 0;
-            char estado = 'X';
+            char estado = '-';
             int idProceso = 0;
             bool ocupado = false;
         } m[34];
+        int mLibre;
+        int mUsada;
+        int pagDis;
         void pantallaDeProcesos();
         void generarProcesos(const int &cProcesos);
         void maxProcesos();
@@ -59,6 +62,8 @@ class Interfaz {
         void imprimirTiemposFinal();
         void imprimirTiemposActual();
         void datosTiempoActual(queue<Proceso>& q, const string &n, unsigned int &i);
+        void liberarMemoria(const int &index);
+        void asignarEstado(const int& index, const char& estado);
         void pausa();
         void pausaProceso();
         bool checkNumInt(const string &cadena);

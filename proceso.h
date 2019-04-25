@@ -25,6 +25,7 @@ class Proceso {
         void adherirTTranscurrido();
         void sustraerTRestante();
         void sustraerTBloqueo();
+        void setTamanio(const int & tamanio);
         int getId();
         int getN1();
         int getN2();
@@ -42,6 +43,7 @@ class Proceso {
         int getTRestante();
         int getTBloqueo();
         bool getTResFlag();
+        int getTamanio();
     private:
         int id;
         int n1;
@@ -59,6 +61,7 @@ class Proceso {
         int tRestante;
         int tBloqueado;
         bool tResFlag;
+        int tamanio;
 };
 
 #endif // PROCESO_H

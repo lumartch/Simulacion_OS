@@ -161,4 +161,11 @@ std::string Proceso::getOperacion() {
     return s;
 }
 
+void Proceso::setTamanio(const int& tamanio) {
+    this->tamanio = tamanio;
+}
+
+int Proceso::getTamanio() {
+    return tamanio;
+}
 

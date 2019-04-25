@@ -41,6 +41,12 @@ class Interfaz {
         int procesoTotal;
         int quantum;
         int contQuantum;
+        struct Memoria{
+            int tUsado = 0;
+            char estado = 'X';
+            int idProceso = 0;
+            bool ocupado = false;
+        } m[34];
         void pantallaDeProcesos();
         void generarProcesos(const int &cProcesos);
         void maxProcesos();
@@ -48,6 +54,7 @@ class Interfaz {
         void imprimirEjecucion();
         void imprimirBloqueados();
         void imprimirTerminados();
+        void imprimirMemoria();
         int procesarDatos();
         void imprimirTiemposFinal();
         void imprimirTiemposActual();

@@ -66,6 +66,9 @@ class Interfaz {
         void datosTiempoActual(queue<Proceso>& q, const string &n, unsigned int &i);
         void liberarMemoria(const int &index);
         void asignarEstado(const int& index, const char& estado);
+        void bloqueadoSuspendido();
+        void regresaBloqueado();
+        void nuevoProceso();
         void pausa();
         void pausaProceso();
         bool checkNumInt(const string &cadena);

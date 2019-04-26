@@ -20,7 +20,7 @@ void Interfaz::menuInicio() {
     do {
         system(CLEAR);
         cout << "+-----------------------------------------------------------------+" << endl;
-        cout << "|      Simulación de un OS        V 1.5                           |" << endl;
+        cout << "|      Simulación de un OS        V 1.6                           |" << endl;
         cout << "+-----------------------------------------------------------------+" << endl;
         cout << "| Ingrese la cantidad de procesos a crear:                        |" << endl;
         cout << "+-----------------------------------------------------------------+" << endl;
@@ -831,12 +831,12 @@ void Interfaz::regresaBloqueado() {
                     }
                     if(i == 0){
                         bloqueado.push(p);
+                        cout << "\033[32;124H   " << endl;
+                        cout << "\033[32;109H   " << endl;
                     }
                     else if(i == 1){
                         ///
-                        cout << "\033[32;109H   " << endl;
                         cout << "\033[32;109H" << p.getId() << endl;
-                        cout << "\033[32;124H   " << endl;
                         cout << "\033[32;124H" << p.getTamanio() << endl;
                         fout << p.toString();
                     }

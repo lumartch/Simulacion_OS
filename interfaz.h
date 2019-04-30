@@ -52,6 +52,7 @@ class Interfaz {
         int mLibre;
         int mUsada;
         int pagDis;
+        int cSuspendidos;
         void pantallaDeProcesos();
         void generarProcesos(const int &cProcesos);
         void maxProcesos();

@@ -8,6 +8,7 @@ Interfaz::Interfaz() {
     mLibre = 170;
     mUsada = 10;
     pagDis = 34;
+    cSuspendidos = 0;
     menuInicio();
 }
 
@@ -73,6 +74,8 @@ void Interfaz::menuInicio() {
         cout << "\033[2;80H" << tiempoTotal << endl;
         cout << "\033[2;100H    " << endl;
         cout << "\033[2;100H" << contQuantum << endl;
+        cout << "\033[32;94H   " << endl;
+        cout << "\033[32;94H" << cSuspendidos << endl;
         sleep(1);
         maxProcesos();
         bool f = false;
@@ -252,8 +255,8 @@ void Interfaz::pantallaDeProcesos() {
     cout << "                                 | ID Bloqueado  |  T. de bloqueo |" << endl;
     cout << "                                 +---------------+----------------+" << endl;
     cout << "\033[31;0H";
-    cout << "+---------------+---------+-------+-----------+-------+-----------+-------+                     +---------+-------+------+--------+" << endl;
-    cout << "|    Memoria    | M.Libre |       | M.Ocupada |       | Marcos D. |       |                     | ID. SUS |       | TAM  |        |" << endl;
+    cout << "+---------------+---------+-------+-----------+-------+-----------+-------+      +---------+----+---------+-------+------+--------+" << endl;
+    cout << "|    Memoria    | M.Libre |       | M.Ocupada |       | Marcos D. |       |      | C.Susp  |    | ID. SUS |       | TAM  |        |" << endl;
     cout << "+----------+----+----+----+----+--+-+----+----+----+--+-+----+----+----+--+-+----+----+----+----+----+----+----+--+-+----+----+---++----+----+----+----+----+----+----+----+----+----+----+----+" << endl;
     cout << "|  Página  |  0 |  1 |  2 |  3 |  4 |  5 |  6 |  7 |  8 |  9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20 | 21 | 22 | 23 | 24 | 25 | 26 | 27 | 28 | 29 | 30 | 31 | 32 | 33 | 34 | 35 |" << endl;
     cout << "+----------+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+" << endl;
@@ -351,6 +354,7 @@ int Interfaz::procesarDatos() {
     if(nuevo.empty() and listo.empty() and ejecucion.empty() and !bloqueado.empty()) {
         while(true) {
             ch = kbhit();
+            maxProcesos();
             if(ch == 112 or ch == 80 or ch == 109 or ch == 77) {
                 pausaKbhit();
             } else if(ch == 78 or ch == 110) {
@@ -358,11 +362,13 @@ int Interfaz::procesarDatos() {
                 break;
             } else if(ch == 115 or ch == 83) {
                 /// Bloqueado suspendido
-                bloqueadoSuspendido();
-                maxProcesos();
-                imprimirListos();
-                imprimirBloqueados();
-                imprimirMemoria();
+                if(!bloqueado.empty()) {
+                    bloqueadoSuspendido();
+                    maxProcesos();
+                    imprimirListos();
+                    imprimirBloqueados();
+                    imprimirMemoria();
+                }
                 break;
             } else if(ch == 114 or ch == 82) {
                 /// Regresa
@@ -398,6 +404,8 @@ int Interfaz::procesarDatos() {
         }
     } else if(nuevo.empty() and listo.empty() and bloqueado.empty() and ejecucion.empty()) {
         while(true) {
+            maxProcesos();
+            cout << "\033[2;80H" << ++tiempoTotal << endl;
             ch = kbhit();
             if(ch == 112 or ch == 80 or ch == 109 or ch == 77) {
                 pausaKbhit();
@@ -410,10 +418,12 @@ int Interfaz::procesarDatos() {
             } else if(ch == 116 or ch == 84) {
                 imprimirTiemposActual();
             }
+            sleep(1);
         }
     } else {
         while(ch != 0 and ch != 1 and ch != 2 and ch != 3) {
             /* Impresión del tiempo transcurrido, tiempo total e incremento del tiempo total */
+            maxProcesos();
             imprimirListos();
             imprimirBloqueados();
             imprimirEjecucion();
@@ -428,15 +438,17 @@ int Interfaz::procesarDatos() {
                 pausaKbhit();
             } else if(ch == 115 or ch == 83) {
                 /// Bloqueado suspendido
-                bloqueadoSuspendido();
+                if(!bloqueado.empty()) {
+                    bloqueadoSuspendido();
+                }
                 break;
             } else if(ch == 114 or ch == 82) {
                 /// Regresa
                 regresaBloqueado();
                 break;
             } else if(ch == 78 or ch == 110) {
-               nuevoProceso();
-               break;
+                nuevoProceso();
+                break;
             } else if(ch == 116 or ch == 84) {
                 imprimirTiemposActual();
             } else {
@@ -525,6 +537,8 @@ void Interfaz::imprimirTiemposActual() {
     cout << "\033[32;69H    "<< endl;
     cout << "\033[32;69H" << pagDis << endl;
     cout << "\033[2;80H" << tiempoTotal << endl;
+    cout << "\033[32;94H   " << endl;
+    cout << "\033[32;94H" << cSuspendidos << endl;
     imprimirListos();
     imprimirEjecucion();
     imprimirTerminados();
@@ -624,6 +638,9 @@ void Interfaz::imprimirTiemposFinal() {
         terminado.pop();
     }
     cout << "\033[" << 4 + terminado.size() << ";1H+-----+------------------+-----------------+-----------+----------------+--------------+-------------+-----------+------------+-----+------+" << endl;
+
+    cout << "\033[32;94H   " << endl;
+    cout << "\033[32;94H" << cSuspendidos << endl;
 }
 
 void Interfaz::imprimirMemoria() {
@@ -716,13 +733,15 @@ void Interfaz::bloqueadoSuspendido() {
         cout << "\033[32;124H" << p.getTamanio() << endl;
     }
     fin.close();
+    cout << "\033[32;94H   " << endl;
+    cout << "\033[32;94H" << ++cSuspendidos << endl;
 }
 
 void Interfaz::regresaBloqueado() {
     ifstream fileIn("Bloqueado-Suspendido.txt");
     Proceso p;
     string str;
-    if(fileIn.good()){
+    if(fileIn.good()) {
         getline(fileIn, str, '|');
         p.setId(atoi(str.c_str()));
         getline(fileIn, str, '|');
@@ -759,7 +778,7 @@ void Interfaz::regresaBloqueado() {
     }
     fileIn.close();
     ///
-    if(p.getId() != -1111){
+    if(p.getId() != -1111) {
         int noPaginas = (p.getTamanio() * 10)/5;
         if(noPaginas%5 == 0) {
             noPaginas = (noPaginas/10);
@@ -789,9 +808,9 @@ void Interfaz::regresaBloqueado() {
             ifstream fin("Bloqueado-Suspendido.txt");
             ofstream fout("temporal.txt");
             bool f = false;
-            if(fin.good()){
+            if(fin.good()) {
                 int i = 0;
-                while(!fin.eof()){
+                while(!fin.eof()) {
                     f = true;
                     getline(fin, str, '|');
                     p.setId(atoi(str.c_str()));
@@ -826,21 +845,19 @@ void Interfaz::regresaBloqueado() {
                     getline(fin, str, '|');
                     getline(fin, str, '\n');
                     p.setTamanio(atoi(str.c_str()));
-                    if(fin.eof()){
+                    if(fin.eof()) {
                         break;
                     }
-                    if(i == 0){
+                    if(i == 0) {
                         bloqueado.push(p);
                         cout << "\033[32;124H   " << endl;
                         cout << "\033[32;109H   " << endl;
-                    }
-                    else if(i == 1){
+                    } else if(i == 1) {
                         ///
                         cout << "\033[32;109H" << p.getId() << endl;
                         cout << "\033[32;124H" << p.getTamanio() << endl;
                         fout << p.toString();
-                    }
-                    else {
+                    } else {
                         fout << p.toString();
                     }
                     i++;
@@ -850,7 +867,15 @@ void Interfaz::regresaBloqueado() {
             fout.close();
             remove("Bloqueado-Suspendido.txt");
             rename("temporal.txt", "Bloqueado-Suspendido.txt");
-            if(f == false){
+            if(cSuspendidos > 0){
+                cout << "\033[32;94H   " << endl;
+                cout << "\033[32;94H" << --cSuspendidos << endl;
+            }
+            else{
+                cout << "\033[32;94H   " << endl;
+                cout << "\033[32;94H" << cSuspendidos << endl;
+            }
+            if(f == false) {
                 cout << "\033[32;109H   " << endl;
                 cout << "\033[32;124H   " << endl;
                 cout << "\033[32;109H0" << endl;

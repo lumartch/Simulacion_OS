@@ -21,7 +21,7 @@ void Interfaz::menuInicio() {
     do {
         system(CLEAR);
         cout << "+-----------------------------------------------------------------+" << endl;
-        cout << "|      Simulación de un OS        V 1.6                           |" << endl;
+        cout << "|      Simulación de un OS        V 1.7                           |" << endl;
         cout << "+-----------------------------------------------------------------+" << endl;
         cout << "| Ingrese la cantidad de procesos a crear:                        |" << endl;
         cout << "+-----------------------------------------------------------------+" << endl;
@@ -352,7 +352,8 @@ void Interfaz::imprimirTerminados() {
 int Interfaz::procesarDatos() {
     int ch = -1;
     if(nuevo.empty() and listo.empty() and ejecucion.empty() and !bloqueado.empty()) {
-        while(true) {
+        bool f = false;
+        while(true and f == false) {
             ch = kbhit();
             maxProcesos();
             if(ch == 112 or ch == 80 or ch == 109 or ch == 77) {
@@ -377,28 +378,24 @@ int Interfaz::procesarDatos() {
             } else if(ch == 116 or ch == 84) {
                 imprimirTiemposActual();
             } else {
-                if(bloqueado.front().getTBloqueo() > 0) {
-                    for(unsigned int i = 0; i < bloqueado.size(); i++) {
-                        bloqueado.front().sustraerTBloqueo();
+                for(unsigned int i = 0; i < bloqueado.size(); i++) {
+                    bloqueado.front().sustraerTBloqueo();
+                    if(bloqueado.front().getTBloqueo() < 0){
+                        asignarEstado(bloqueado.front().getId(), 'L');
+                        listo.push(bloqueado.front());
+                        bloqueado.pop();
+                        i--;
+                        f = true;
+                        ch = -1;
+                    }
+                    else{
                         bloqueado.push(bloqueado.front());
                         bloqueado.pop();
                     }
-                    imprimirBloqueados();
-                    imprimirMemoria();
-                    cout << "\033[2;80H" << ++tiempoTotal << endl;
-                } else {
-                    cout << "\033[2;80H" << tiempoTotal << endl;
-                    cout << "\033[" << 13  << ";52H              " << endl;
-                    cout << "\033[" << 13  << ";52H" << bloqueado.front().getTBloqueo() << endl;
-                    asignarEstado(bloqueado.front().getId(), 'L');
-                    listo.push(bloqueado.front());
-                    bloqueado.pop();
-                    imprimirMemoria();
-                    ch = -1;
-                    break;
                 }
-                cout << "\033[" << 13  << ";52H              " << endl;
-                cout << "\033[" << 13  << ";52H" << bloqueado.front().getTBloqueo() << endl;
+                imprimirBloqueados();
+                imprimirMemoria();
+                cout << "\033[2;80H" << ++tiempoTotal << endl;
                 sleep(1);
             }
         }
@@ -421,7 +418,8 @@ int Interfaz::procesarDatos() {
             sleep(1);
         }
     } else {
-        while(ch != 0 and ch != 1 and ch != 2 and ch != 3) {
+        bool f = false;
+        while(ch != 0 and ch != 1 and ch != 2 and ch != 3 and f == false) {
             /* Impresión del tiempo transcurrido, tiempo total e incremento del tiempo total */
             maxProcesos();
             imprimirListos();
@@ -473,17 +471,24 @@ int Interfaz::procesarDatos() {
                         }
                         // Impresión de cualquier proceso en bloqueado
                         if(!bloqueado.empty()) {
-                            if(bloqueado.front().getTBloqueo() <= 0) {
-                                listo.push(bloqueado.front());
-                                asignarEstado(bloqueado.front().getId(), 'L');
-                                bloqueado.pop();
-                            } else {
-                                for(unsigned int i = 0; i < bloqueado.size(); i++) {
-                                    bloqueado.front().sustraerTBloqueo();
+                            for(unsigned int i = 0; i < bloqueado.size(); i++) {
+                                bloqueado.front().sustraerTBloqueo();
+                                if(bloqueado.front().getTBloqueo() < 0){
+                                    asignarEstado(bloqueado.front().getId(), 'L');
+                                    listo.push(bloqueado.front());
+                                    bloqueado.pop();
+                                    i--;
+                                    f = true;
+                                    ch = -1;
+                                }
+                                else{
                                     bloqueado.push(bloqueado.front());
                                     bloqueado.pop();
                                 }
                             }
+                            imprimirBloqueados();
+                            imprimirMemoria();
+                            cout << "\033[2;80H" << ++tiempoTotal << endl;
                         }
                     }
                 } else {

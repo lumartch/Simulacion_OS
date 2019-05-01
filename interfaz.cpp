@@ -258,7 +258,7 @@ void Interfaz::pantallaDeProcesos() {
     cout << "+---------------+---------+-------+-----------+-------+-----------+-------+      +---------+----+---------+-------+------+--------+" << endl;
     cout << "|    Memoria    | M.Libre |       | M.Ocupada |       | Marcos D. |       |      | C.Susp  |    | ID. SUS |       | TAM  |        |" << endl;
     cout << "+----------+----+----+----+----+--+-+----+----+----+--+-+----+----+----+--+-+----+----+----+----+----+----+----+--+-+----+----+---++----+----+----+----+----+----+----+----+----+----+----+----+" << endl;
-    cout << "|  Página  |  0 |  1 |  2 |  3 |  4 |  5 |  6 |  7 |  8 |  9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20 | 21 | 22 | 23 | 24 | 25 | 26 | 27 | 28 | 29 | 30 | 31 | 32 | 33 | 34 | 35 |" << endl;
+    cout << "|  Marcos  |  0 |  1 |  2 |  3 |  4 |  5 |  6 |  7 |  8 |  9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20 | 21 | 22 | 23 | 24 | 25 | 26 | 27 | 28 | 29 | 30 | 31 | 32 | 33 | 34 | 35 |" << endl;
     cout << "+----------+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+" << endl;
     cout << "|  Tamaño  |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |  5 |" << endl;
     cout << "+----------+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+" << endl;
@@ -479,7 +479,6 @@ int Interfaz::procesarDatos() {
                                     bloqueado.pop();
                                     i--;
                                     f = true;
-                                    ch = -1;
                                 }
                                 else{
                                     bloqueado.push(bloqueado.front());
@@ -544,6 +543,52 @@ void Interfaz::imprimirTiemposActual() {
     cout << "\033[2;80H" << tiempoTotal << endl;
     cout << "\033[32;94H   " << endl;
     cout << "\033[32;94H" << cSuspendidos << endl;
+    ///
+    ifstream fin("Bloqueado-Suspendido.txt");
+    Proceso p;
+    string str;
+    if(fin.good()) {
+        getline(fin, str, '|');
+        p.setId(atoi(str.c_str()));
+        getline(fin, str, '|');
+        p.setN1(atoi(str.c_str()));
+        getline(fin, str, '|');
+        p.setN2(atoi(str.c_str()));
+        getline(fin, str, '|');
+        p.setOperador(str);
+        getline(fin, str, '|');
+        p.setTME(atoi(str.c_str()));
+        getline(fin, str, '|');
+        p.setResultado(str);
+        getline(fin, str, '|');
+        p.setTLlegada(atoi(str.c_str()));
+        getline(fin, str, '|');
+        p.setTFinalizacion(atoi(str.c_str()));
+        getline(fin, str, '|');
+        p.setTRetorno(atoi(str.c_str()));
+        getline(fin, str, '|');
+        p.setTRespuesta(atoi(str.c_str()));
+        getline(fin, str, '|');
+        p.setTEspera(atoi(str.c_str()));
+        getline(fin, str, '|');
+        p.setTServicio(atoi(str.c_str()));
+        getline(fin, str, '|');
+        p.setTTranscurrido(atoi(str.c_str()));
+        getline(fin, str, '|');
+        p.setTRestante(atoi(str.c_str()));
+        getline(fin, str, '|');
+        p.setTBloqueo(atoi(str.c_str()));
+        getline(fin, str, '|');
+        getline(fin, str, '|');
+        p.setTamanio(atoi(str.c_str()));
+        getline(fin, str, '\n');
+        p.setTEspera(p.getTEspera() + (tiempoTotal - atoi(str.c_str())) );
+        cout << "\033[32;109H   " << endl;
+        cout << "\033[32;109H" << p.getId() << endl;
+        cout << "\033[32;124H   " << endl;
+        cout << "\033[32;124H" << p.getTamanio() << endl;
+    }
+    fin.close();
     imprimirListos();
     imprimirEjecucion();
     imprimirTerminados();
@@ -690,7 +735,7 @@ bool Interfaz::checkNumInt(const string& cadena) {
 void Interfaz::bloqueadoSuspendido() {
     ///
     fstream fout("Bloqueado-Suspendido.txt", ios::app);
-    fout << bloqueado.front().toString();
+    fout << bloqueado.front().toString() << "|" << tiempoTotal << endl;
     fout.close();
     liberarMemoria(bloqueado.front().getId());
     bloqueado.pop();
@@ -730,8 +775,10 @@ void Interfaz::bloqueadoSuspendido() {
         getline(fin, str, '|');
         p.setTBloqueo(atoi(str.c_str()));
         getline(fin, str, '|');
-        getline(fin, str, '\n');
+        getline(fin, str, '|');
         p.setTamanio(atoi(str.c_str()));
+        getline(fin, str, '\n');
+        p.setTEspera(p.getTEspera() + (tiempoTotal - atoi(str.c_str())) );
         cout << "\033[32;109H   " << endl;
         cout << "\033[32;109H" << p.getId() << endl;
         cout << "\033[32;124H   " << endl;
@@ -778,8 +825,10 @@ void Interfaz::regresaBloqueado() {
         getline(fileIn, str, '|');
         p.setTBloqueo(atoi(str.c_str()));
         getline(fileIn, str, '|');
-        getline(fileIn, str, '\n');
+        getline(fileIn, str, '|');
         p.setTamanio(atoi(str.c_str()));
+        getline(fileIn, str, '\n');
+        p.setTEspera(p.getTEspera() + (tiempoTotal - atoi(str.c_str())) );
     }
     fileIn.close();
     ///
@@ -848,8 +897,10 @@ void Interfaz::regresaBloqueado() {
                     getline(fin, str, '|');
                     p.setTBloqueo(atoi(str.c_str()));
                     getline(fin, str, '|');
-                    getline(fin, str, '\n');
+                    getline(fin, str, '|');
                     p.setTamanio(atoi(str.c_str()));
+                    getline(fin, str, '\n');
+                    p.setTEspera(p.getTEspera() + (tiempoTotal - atoi(str.c_str())) );
                     if(fin.eof()) {
                         break;
                     }

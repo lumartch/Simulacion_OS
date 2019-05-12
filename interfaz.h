@@ -44,14 +44,16 @@ class Interfaz {
         int quantum;
         int contQuantum;
         struct Memoria{
+            int noPagina = 0;
             int tUsado = 0;
             char estado = '-';
             int idProceso = 0;
             bool ocupado = false;
-        } m[34];
+        } m[34], mv[36];
         int mLibre;
         int mUsada;
         int pagDis;
+        int mVDis;
         int cSuspendidos;
         void pantallaDeProcesos();
         void generarProcesos(const int &cProcesos);
@@ -69,6 +71,9 @@ class Interfaz {
         void asignarEstado(const int& index, const char& estado);
         void bloqueadoSuspendido();
         void regresaBloqueado();
+        int mPrincipalPaginas(const int &idProceso);
+        void ingresaMemoriaVirtual(queue <Proceso> &q);
+        void imprimirMemoriaVirtual();
         void nuevoProceso();
         void pausa();
         void pausaProceso();

@@ -8,6 +8,7 @@ Interfaz::Interfaz() {
     mLibre = 170;
     mUsada = 10;
     pagDis = 34;
+    mVDis = 36;
     cSuspendidos = 0;
     menuInicio();
 }
@@ -142,6 +143,7 @@ void Interfaz::menuInicio() {
                 cout << "\033[2;100H    " << endl;
                 cout << "\033[2;100H" << contQuantum << endl;
                 imprimirMemoria();
+    			imprimirMemoriaVirtual();
             } else {
                 f = false;
             }
@@ -152,6 +154,7 @@ void Interfaz::menuInicio() {
     imprimirTerminados();
     imprimirBloqueados();
     imprimirMemoria();
+    imprimirMemoriaVirtual();
     cout << "\033[50;1H" << endl << endl;
     cout << "Presione [C] para mostrar el cálculo de los tiempos...";
     while(true) {
@@ -202,12 +205,14 @@ void Interfaz::maxProcesos() {
             mLibre -= nuevo.front().getTamanio();
             mUsada += nuevo.front().getTamanio();
             pagDis -= noPaginas;
+            nuevo.front().setTPaginas(noPaginas);
             for(int i = 0, tamanio = nuevo.front().getTamanio(); i < 34 and noPaginas > 0; i++) {
                 if(m[i].ocupado == false) {
                     noPaginas--;
                     m[i].ocupado = true;
                     m[i].estado = 'L';
                     m[i].idProceso = nuevo.front().getId();
+                    m[i].noPagina++;
                     if(tamanio > 5) {
                         tamanio -= 5;
                         m[i].tUsado += 5;
@@ -272,7 +277,16 @@ void Interfaz::pantallaDeProcesos() {
     cout << "+----------+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+" << endl;
     cout << "|  Proceso |  X |  X |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |" << endl;
     cout << "+----------+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+" << endl;
+    cout << endl;
+    cout << "+------------------+" << endl;
+    cout << "|  Memoria Virtual |" << endl;
+    cout << "+----------+----+--+-+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+" << endl;
+    cout << "|  Proceso |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |" << endl;
+    cout << "+----------+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+" << endl;
+    cout << "|  Estado  |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |" << endl;
+    cout << "+----------+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+" << endl;
     imprimirMemoria();
+    imprimirMemoriaVirtual();
 }
 
 void Interfaz::imprimirListos() {
@@ -306,6 +320,9 @@ void Interfaz::imprimirEjecucion() {
             ejecucion.push(listo.front());
             listo.pop();
             asignarEstado(ejecucion.front().getId(), 'E');
+            /*if(listo.front().getTPaginas() != mPrincipalPaginas(listo.front().getId())){
+
+            }*/
         }
     }
     // Imprime en pantalla todo dato que se encuentre dentro de la cola Ejecucion
@@ -358,6 +375,11 @@ int Interfaz::procesarDatos() {
             maxProcesos();
             if(ch == 112 or ch == 80 or ch == 109 or ch == 77) {
                 pausaKbhit();
+            } else if(ch == 85 or ch == 117) {
+                /// TECLA U
+                ingresaMemoriaVirtual(listo);
+
+                break;
             } else if(ch == 78 or ch == 110) {
                 nuevoProceso();
                 break;
@@ -380,15 +402,14 @@ int Interfaz::procesarDatos() {
             } else {
                 for(unsigned int i = 0; i < bloqueado.size(); i++) {
                     bloqueado.front().sustraerTBloqueo();
-                    if(bloqueado.front().getTBloqueo() < 0){
+                    if(bloqueado.front().getTBloqueo() < 0) {
                         asignarEstado(bloqueado.front().getId(), 'L');
                         listo.push(bloqueado.front());
                         bloqueado.pop();
                         i--;
                         f = true;
                         ch = -1;
-                    }
-                    else{
+                    } else {
                         bloqueado.push(bloqueado.front());
                         bloqueado.pop();
                     }
@@ -408,6 +429,11 @@ int Interfaz::procesarDatos() {
                 pausaKbhit();
             } else if(ch == 78 or ch == 110) {
                 nuevoProceso();
+                break;
+            } else if(ch == 85 or ch == 117) {
+                /// TECLA U
+                ingresaMemoriaVirtual(listo);
+
                 break;
             } else if(ch == 114 or ch == 82) {
                 regresaBloqueado();
@@ -434,6 +460,11 @@ int Interfaz::procesarDatos() {
                 ch = 1;
             } else if(ch == 112 or ch == 80 or ch == 77 or ch == 109) {
                 pausaKbhit();
+            } else if(ch == 85 or ch == 117) {
+                /// TECLA U
+                ingresaMemoriaVirtual(listo);
+
+                break;
             } else if(ch == 115 or ch == 83) {
                 /// Bloqueado suspendido
                 if(!bloqueado.empty()) {
@@ -473,14 +504,13 @@ int Interfaz::procesarDatos() {
                         if(!bloqueado.empty()) {
                             for(unsigned int i = 0; i < bloqueado.size(); i++) {
                                 bloqueado.front().sustraerTBloqueo();
-                                if(bloqueado.front().getTBloqueo() < 0){
+                                if(bloqueado.front().getTBloqueo() < 0) {
                                     asignarEstado(bloqueado.front().getId(), 'L');
                                     listo.push(bloqueado.front());
                                     bloqueado.pop();
                                     i--;
                                     f = true;
-                                }
-                                else{
+                                } else {
                                     bloqueado.push(bloqueado.front());
                                     bloqueado.pop();
                                 }
@@ -654,6 +684,7 @@ void Interfaz::liberarMemoria(const int& index) {
             m[i].estado = '-';
             m[i].idProceso = 0;
             m[i].ocupado = false;
+            m[i].noPagina = 0;
         }
     }
 }
@@ -923,11 +954,10 @@ void Interfaz::regresaBloqueado() {
             fout.close();
             remove("Bloqueado-Suspendido.txt");
             rename("temporal.txt", "Bloqueado-Suspendido.txt");
-            if(cSuspendidos > 0){
+            if(cSuspendidos > 0) {
                 cout << "\033[32;94H   " << endl;
                 cout << "\033[32;94H" << --cSuspendidos << endl;
-            }
-            else{
+            } else {
                 cout << "\033[32;94H   " << endl;
                 cout << "\033[32;94H" << cSuspendidos << endl;
             }
@@ -941,6 +971,60 @@ void Interfaz::regresaBloqueado() {
             imprimirMemoria();
             sleep(1);
         }
+    }
+}
+
+int Interfaz::mPrincipalPaginas(const int& idProceso) {
+    int res = 0;
+    for(int i = 0; i < 34; i++) {
+        if(m[i].idProceso == idProceso) {
+            res++;
+        }
+    }
+    return res;
+}
+
+void Interfaz::ingresaMemoriaVirtual(queue <Proceso> &q) {
+    for(unsigned int i = 0; i < q.size(); i++) {
+        int cPag = 0, index = 0;
+        for(int j = 0; j < 34; j++){
+            if(m[j].idProceso == q.front().getId()){
+                cPag++;
+                index = j;
+            }
+        }
+
+        if(cPag > 1 and mVDis > 0) {
+            for(int j = 0; j < 36; j++){
+                if(mv[j].ocupado == false){
+                    mv[j] = m[index];
+                    break;
+                }
+            }
+            mLibre += m[index].tUsado;
+            mUsada -= m[index].tUsado;
+            pagDis++;
+            m[index].tUsado = 0;
+            m[index].estado = '-';
+            m[index].idProceso = 0;
+            m[index].ocupado = false;
+            m[index].noPagina = 0;
+            mVDis--;
+        }
+        q.push(q.front());
+        q.pop();
+    }
+    imprimirMemoria();
+    imprimirMemoriaVirtual();
+}
+
+void Interfaz::imprimirMemoriaVirtual() {
+	//
+    for(int i = 0; i < 36; i++) {
+        cout << "\033[52;" << 14 + (i * 5) << "H   " << endl;
+        cout << "\033[52;" << 14 + (i * 5) << "H" << mv[i].idProceso << endl;
+        cout << "\033[54;" << 14 + (i * 5) << "H   " << endl;
+        cout << "\033[54;" << 14 + (i * 5) << "H" << mv[i].estado << endl;
     }
 }
 
@@ -982,16 +1066,16 @@ int Interfaz::kbhit(void) {
 }
 
 void Interfaz::pausaKbhit() {
-    cout << "\033[50;1H¡Pausa! Presione [c] para continuar..." << endl;
+    cout << "\033[56;1H¡Pausa! Presione [c] para continuar..." << endl;
     int ch = 0;
     while (getchar() != EOF);
     while(true) {
         ch = kbhit();
         if(ch == 99 or ch == 67) {
-            cout << "\033[50;1H                                      " << endl;
-            cout << "\033[50;1H¡Continuemos!                        " << endl;
+            cout << "\033[56;1H                                      " << endl;
+            cout << "\033[56;1H¡Continuemos!                        " << endl;
             sleep(1);
-            cout << "\033[50;1H                                      " << endl;
+            cout << "\033[56;1H                                      " << endl;
             break;
         }
     }

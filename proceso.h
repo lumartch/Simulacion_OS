@@ -47,6 +47,8 @@ class Proceso {
         bool getTResFlag();
         int getTamanio();
         std::string toString();
+        void setTPaginas(const int &tPaginas);
+        int getTPaginas();
     private:
         int id;
         int n1;
@@ -65,6 +67,7 @@ class Proceso {
         int tBloqueado;
         bool tResFlag;
         int tamanio;
+        int tPaginas;
 };
 
 #endif // PROCESO_H

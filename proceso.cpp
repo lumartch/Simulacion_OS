@@ -159,6 +159,15 @@ bool Proceso::getTResFlag() {
     return tResFlag;
 }
 
+void Proceso::setTPaginas(const int& tPaginas) {
+    this->tPaginas = tPaginas;
+}
+
+int Proceso::getTPaginas() {
+    return tPaginas;
+}
+
+
 std::string Proceso::getOperacion() {
     std::string s;
     std::stringstream stream;

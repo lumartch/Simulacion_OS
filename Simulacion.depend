@@ -21,15 +21,15 @@
 1557092495 /home/lumartch/Simulacion_OS/lote.h
 	"proceso.h"
 
-1557112569 /home/lumartch/Simulacion_OS/proceso.h
+1557809021 /home/lumartch/Simulacion_OS/proceso.h
 	<string>
 	<sstream>
 	<iomanip>
 
-1557112674 source:/home/lumartch/Simulacion_OS/proceso.cpp
+1557809011 source:/home/lumartch/Simulacion_OS/proceso.cpp
 	"proceso.h"
 
-1557805763 source:/home/lumartch/Simulacion_OS/interfaz.cpp
+1557808983 source:/home/lumartch/Simulacion_OS/interfaz.cpp
 	"interfaz.h"
 
 1557092495 source:/home/lumartch/Documentos/Simulacion_OS/main.cpp

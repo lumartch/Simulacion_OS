@@ -3,9 +3,10 @@
 	<iostream>
 	"interfaz.h"
 
-1557370766 /home/lumartch/Simulacion_OS/interfaz.h
+1557788623 /home/lumartch/Simulacion_OS/interfaz.h
 	<iostream>
 	<queue>
+	<stack>
 	<ctime>
 	<string>
 	<regex>
@@ -28,6 +29,6 @@
 1557112674 source:/home/lumartch/Simulacion_OS/proceso.cpp
 	"proceso.h"
 
-1557632906 source:/home/lumartch/Simulacion_OS/interfaz.cpp
+1557794970 source:/home/lumartch/Simulacion_OS/interfaz.cpp
 	"interfaz.h"
 

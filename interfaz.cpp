@@ -143,7 +143,7 @@ void Interfaz::menuInicio() {
                 cout << "\033[2;100H    " << endl;
                 cout << "\033[2;100H" << contQuantum << endl;
                 imprimirMemoria();
-    			imprimirMemoriaVirtual();
+                imprimirMemoriaVirtual();
             } else {
                 f = false;
             }
@@ -206,13 +206,14 @@ void Interfaz::maxProcesos() {
             mUsada += nuevo.front().getTamanio();
             pagDis -= noPaginas;
             nuevo.front().setTPaginas(noPaginas);
-            for(int i = 0, tamanio = nuevo.front().getTamanio(); i < 34 and noPaginas > 0; i++) {
+            for(int i = 0, tamanio = nuevo.front().getTamanio(), noPag = 0; i < 34 and noPaginas > 0; i++) {
                 if(m[i].ocupado == false) {
                     noPaginas--;
+                    noPag++;
                     m[i].ocupado = true;
                     m[i].estado = 'L';
                     m[i].idProceso = nuevo.front().getId();
-                    m[i].noPagina++;
+                    m[i].noPagina = noPag;
                     if(tamanio > 5) {
                         tamanio -= 5;
                         m[i].tUsado += 5;
@@ -261,7 +262,7 @@ void Interfaz::pantallaDeProcesos() {
     cout << "                                 +---------------+----------------+" << endl;
     cout << "\033[31;0H";
     cout << "+---------------+---------+-------+-----------+-------+-----------+-------+      +---------+----+---------+-------+------+--------+" << endl;
-    cout << "|    Memoria    | M.Libre |       | M.Ocupada |       | Marcos D. |       |      | C.Susp  |    | ID. SUS |       | TAM  |        |" << endl;
+    cout << "|    Memoria    | M.Libre |       | M.Ocupada |       | Marcos D. |       |      | B.Susp  |    | ID.BSUS |       | TAM  |        |" << endl;
     cout << "+----------+----+----+----+----+--+-+----+----+----+--+-+----+----+----+--+-+----+----+----+----+----+----+----+--+-+----+----+---++----+----+----+----+----+----+----+----+----+----+----+----+" << endl;
     cout << "|  Marcos  |  0 |  1 |  2 |  3 |  4 |  5 |  6 |  7 |  8 |  9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20 | 21 | 22 | 23 | 24 | 25 | 26 | 27 | 28 | 29 | 30 | 31 | 32 | 33 | 34 | 35 |" << endl;
     cout << "+----------+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+" << endl;
@@ -278,9 +279,9 @@ void Interfaz::pantallaDeProcesos() {
     cout << "|  Proceso |  X |  X |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |" << endl;
     cout << "+----------+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+" << endl;
     cout << endl;
-    cout << "+------------------+" << endl;
-    cout << "|  Memoria Virtual |" << endl;
-    cout << "+----------+----+--+-+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+" << endl;
+    cout << "+------------------+-----------+-------+                                         +---------+----+---------+-------+------+--------+" << endl;
+    cout << "|  Memoria Virtual | M. Libre  |       |                                         | L.Susp  |    | ID.LSUS |       | TAM  |        |" << endl;
+    cout << "+----------+----+--+-+----+----+----+--+-+----+----+----+----+----+----+----+----+----+----+----+----+----+----+--+-+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+" << endl;
     cout << "|  Proceso |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |" << endl;
     cout << "+----------+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+" << endl;
     cout << "|  Estado  |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |" << endl;
@@ -307,22 +308,60 @@ void Interfaz::imprimirListos() {
 }
 
 void Interfaz::imprimirEjecucion() {
-    // Código para limpiar los campos de ejecucion
+    /// Código para limpiar los campos de ejecucion
     for(int i = 0; i < 4; i++) {
         cout << "\033[" << 6 + i << ";53H                             " << endl;
     }
-    // Código para imprimir el proceso en el FRONT de la cola listos
-    if(!listo.empty()) {
-        if(ejecucion.empty()) {
-            if(listo.front().getTResFlag() == false) {
-                listo.front().setTRespuesta(tiempoTotal - listo.front().getTLlegada());
-            }
-            ejecucion.push(listo.front());
-            listo.pop();
-            asignarEstado(ejecucion.front().getId(), 'E');
-            /*if(listo.front().getTPaginas() != mPrincipalPaginas(listo.front().getId())){
+    /// Código para imprimir el proceso en el FRONT de la cola listos
+    if(!listoSuspendido.empty()) {
 
-            }*/
+    } else {
+        if(!listo.empty()) {
+            if(ejecucion.empty()) {
+                if(listo.front().getTResFlag() == false) {
+                    listo.front().setTRespuesta(tiempoTotal - listo.front().getTLlegada());
+                }
+                ejecucion.push(listo.front());
+                listo.pop();
+                /// Verifica si el nuevo proceso que entrara a ejecucion tiene todas sus páginas en memoria principal
+                if(mPrincipalPaginas(ejecucion.front().getId()) < ejecucion.front().getTPaginas() ) {
+                    /// Verifica que haya espacio en memoria principal
+                    if(pagDis >= mVirtualPaginas(ejecucion.front().getId())) {
+                        /// Busca los espacios disponibles dentro de memoria principal
+                        for(int i = 0; i < 36; i++) {
+                            if(mv[i].idProceso == ejecucion.front().getId()) {
+                                /// Asigna desde la memoria virtual hacia la principal
+                                for(int j = 0; j < 34; j++) {
+                                    if(m[j].ocupado == false) {
+                                        m[j] = mv[i];
+                                        pagDis--;
+                                        mVDis++;
+                                        mUsada += m[j].tUsado;
+                                        mLibre -= m[j].tUsado;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        liberarMemoriaVirtual(ejecucion.front().getId());
+                        imprimirMemoriaVirtual();
+                    } else {
+                        while(mPrincipalPaginas(ejecucion.front().getId()) < ejecucion.front().getTPaginas()){
+                            /// Libera el último proceso ingresado, poniendolo en Listo - Suspendido
+                            for(unsigned int i = 0; i < listo.size() - 1; i++) {
+                                listo.push(listo.front());
+                                listo.pop();
+                            }
+                            listoSuspendido.push(listo.front());
+                            liberarMemoria(listo.front().getId());
+                            liberarMemoriaVirtual(listo.front().getId());
+                            listo.pop();
+                        }
+                    }
+                }
+                /// Asigna en memoria los datos para imprimir la ejecución
+                asignarEstado(ejecucion.front().getId(), 'E');
+            }
         }
     }
     // Imprime en pantalla todo dato que se encuentre dentro de la cola Ejecucion
@@ -689,6 +728,21 @@ void Interfaz::liberarMemoria(const int& index) {
     }
 }
 
+void Interfaz::liberarMemoriaVirtual(const int& index) {
+    for(int i = 0; i < 36; i++) {
+        if(mv[i].idProceso == index) {
+            mVDis++;
+            mv[i].tUsado = 0;
+            mv[i].estado = '-';
+            mv[i].idProceso = 0;
+            mv[i].ocupado = false;
+            mv[i].noPagina = 0;
+        }
+    }
+}
+
+
+
 void Interfaz::asignarEstado(const int& index, const char& estado) {
     for(int i = 0; i < 34; i++) {
         if(m[i].idProceso == index) {
@@ -984,19 +1038,32 @@ int Interfaz::mPrincipalPaginas(const int& idProceso) {
     return res;
 }
 
+int Interfaz::mVirtualPaginas(const int& idProceso) {
+    int res = 0;
+    for(int i = 0; i < 34; i++) {
+        if(mv[i].idProceso == idProceso) {
+            res++;
+        }
+    }
+    return res;
+}
+
 void Interfaz::ingresaMemoriaVirtual(queue <Proceso> &q) {
     for(unsigned int i = 0; i < q.size(); i++) {
-        int cPag = 0, index = 0;
-        for(int j = 0; j < 34; j++){
-            if(m[j].idProceso == q.front().getId()){
+        int cPag = 0, index = 0, noPagTem = 0;
+        for(int j = 0; j < 34; j++) {
+            if(m[j].idProceso == q.front().getId()) {
                 cPag++;
-                index = j;
+                if(m[j].noPagina > noPagTem){
+                    noPagTem = m[j].noPagina;
+                    index = j;
+                }
             }
         }
 
         if(cPag > 1 and mVDis > 0) {
-            for(int j = 0; j < 36; j++){
-                if(mv[j].ocupado == false){
+            for(int j = 0; j < 36; j++) {
+                if(mv[j].ocupado == false) {
                     mv[j] = m[index];
                     break;
                 }
@@ -1019,7 +1086,7 @@ void Interfaz::ingresaMemoriaVirtual(queue <Proceso> &q) {
 }
 
 void Interfaz::imprimirMemoriaVirtual() {
-	//
+    //
     for(int i = 0; i < 36; i++) {
         cout << "\033[52;" << 14 + (i * 5) << "H   " << endl;
         cout << "\033[52;" << 14 + (i * 5) << "H" << mv[i].idProceso << endl;

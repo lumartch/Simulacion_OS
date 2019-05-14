@@ -10,6 +10,7 @@
 #include <iostream>
 /* TDA para los datos generados */
 #include <queue>
+#include <stack>
 /* Herramientas para el manejo de interfaz */
 #include <ctime>
 #include <string>
@@ -38,6 +39,7 @@ class Interfaz {
         queue<Proceso> ejecucion;
         queue<Proceso> bloqueado;
         queue<Proceso> terminado;
+        stack<Proceso> listoSuspendido;
         int index;
         int tiempoTotal;
         int procesoTotal;
@@ -72,7 +74,9 @@ class Interfaz {
         void bloqueadoSuspendido();
         void regresaBloqueado();
         int mPrincipalPaginas(const int &idProceso);
+        int mVirtualPaginas(const int &idProceso);
         void ingresaMemoriaVirtual(queue <Proceso> &q);
+        void liberarMemoriaVirtual(const int &index);
         void imprimirMemoriaVirtual();
         void nuevoProceso();
         void pausa();

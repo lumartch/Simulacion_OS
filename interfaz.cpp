@@ -58,20 +58,32 @@ void Interfaz::menuInicio() {
     quantum = atoi(quan.c_str());
     pantallaDeProcesos();
     while(int(terminado.size()) != procesoTotal) {
-        ///
+        /// Impresión del estado Nuevo
         cout << "\033[2;21H    " << endl;
         cout << "\033[2;21H" << nuevo.size() << endl;
         cout << "\033[2;39H    " << endl;
         cout << "\033[2;54H    " << endl;
         if(nuevo.empty()) {
-            cout << "\033[2;39H0" << endl;
-            cout << "\033[2;54H0" << endl;
+            cout << "\033[2;39H0    " << endl;
+            cout << "\033[2;54H0    " << endl;
         } else {
             cout << "\033[2;39H" << nuevo.front().getId() << endl;
             cout << "\033[2;54H" << nuevo.front().getTamanio() << endl;
 
         }
-        ///
+        /// Impresión del estado Listo-Suspendido
+        cout << "\033[50;94H   " << endl;
+        cout << "\033[50;94H" << listoSuspendido.size() << endl;
+        cout << "\033[50;109H   " << endl;
+        cout << "\033[50;124H   " << endl;
+        if(listoSuspendido.empty()) {
+            cout << "\033[50;109H0" << endl;
+            cout << "\033[50;124H0" << endl;
+        } else {
+            cout << "\033[50;109H" << listoSuspendido.top().getId() << endl;
+            cout << "\033[50;124H" << listoSuspendido.top().getTamanio() << endl;
+        }
+        /// Impresión del tiempo total, Quantum y elementos en Bloqueado-Suspendido
         cout << "\033[2;80H" << tiempoTotal << endl;
         cout << "\033[2;100H    " << endl;
         cout << "\033[2;100H" << contQuantum << endl;
@@ -155,8 +167,7 @@ void Interfaz::menuInicio() {
     imprimirBloqueados();
     imprimirMemoria();
     imprimirMemoriaVirtual();
-    cout << "\033[50;1H" << endl << endl;
-    cout << "Presione [C] para mostrar el cálculo de los tiempos...";
+    cout << "\033[56;1HPresione [C] para mostrar el cálculo de los tiempos..." << endl;
     while(true) {
         if(kbhit() == 99 or kbhit() == 67) {
             break;
@@ -194,55 +205,102 @@ void Interfaz::generarProcesos(const int & cProcesos) {
 }
 
 void Interfaz::maxProcesos() {
-    while(!nuevo.empty()) {
-        int noPaginas = (nuevo.front().getTamanio() * 10)/5;
-        if(noPaginas%5 == 0) {
-            noPaginas = (noPaginas/10);
-        } else {
-            noPaginas = (noPaginas/10) + 1;
-        }
-        if(pagDis >= noPaginas) {
-            mLibre -= nuevo.front().getTamanio();
-            mUsada += nuevo.front().getTamanio();
-            pagDis -= noPaginas;
-            nuevo.front().setTPaginas(noPaginas);
-            for(int i = 0, tamanio = nuevo.front().getTamanio(), noPag = 0; i < 34 and noPaginas > 0; i++) {
-                if(m[i].ocupado == false) {
-                    noPaginas--;
-                    noPag++;
-                    m[i].ocupado = true;
-                    m[i].estado = 'L';
-                    m[i].idProceso = nuevo.front().getId();
-                    m[i].noPagina = noPag;
-                    if(tamanio > 5) {
-                        tamanio -= 5;
-                        m[i].tUsado += 5;
-                    } else {
-                        m[i].tUsado += tamanio;
-                        break;
+    if(!listoSuspendido.empty()){
+        while(!listoSuspendido.empty()){
+            int noPaginas = listoSuspendido.top().getTPaginas();;
+            if(pagDis >= noPaginas) {
+                mLibre -= listoSuspendido.top().getTamanio();
+                mUsada += listoSuspendido.top().getTamanio();
+                pagDis -= noPaginas;
+                for(int i = 0, tamanio = listoSuspendido.top().getTamanio(), noPag = 0; i < 34 and noPaginas > 0; i++) {
+                    if(m[i].ocupado == false) {
+                        noPaginas--;
+                        noPag++;
+                        m[i].ocupado = true;
+                        m[i].estado = 'L';
+                        m[i].idProceso = listoSuspendido.top().getId();
+                        m[i].noPagina = noPag;
+                        if(tamanio > 5) {
+                            tamanio -= 5;
+                            m[i].tUsado += 5;
+                        } else {
+                            m[i].tUsado += tamanio;
+                            break;
+                        }
                     }
                 }
-            }
-            nuevo.front().setTLlegada(tiempoTotal);
-            listo.push(nuevo.front());
-            nuevo.pop();
-            cout << "\033[2;21H    " << endl;
-            cout << "\033[2;21H" << nuevo.size() << endl;
-            cout << "\033[2;39H    " << endl;
-            cout << "\033[2;54H    " << endl;
-            if(nuevo.empty()) {
-                cout << "\033[2;39H0" << endl;
-                cout << "\033[2;54H0" << endl;
+                listo.push(listoSuspendido.top());
+                listoSuspendido.pop();
+                 /// Impresión del estado Listo-Suspendido
+                cout << "\033[50;94H   " << endl;
+                cout << "\033[50;94H" << listoSuspendido.size() << endl;
+                if(listoSuspendido.empty()) {
+                    cout << "\033[50;109H0" << endl;
+                    cout << "\033[50;124H0" << endl;
+                } else {
+                    cout << "\033[50;109H" << listoSuspendido.top().getId() << endl;
+                    cout << "\033[50;124H" << listoSuspendido.top().getTamanio() << endl;
+                }
+                imprimirListos();
+                imprimirMemoria();
+                imprimirMemoriaVirtual();
+                sleep(1);
             } else {
-                cout << "\033[2;39H" << nuevo.front().getId() << endl;
-                cout << "\033[2;54H" << nuevo.front().getTamanio() << endl;
-
+                break;
             }
-            imprimirListos();
-            imprimirMemoria();
-            sleep(1);
-        } else {
-            break;
+        }
+    }
+    else{
+        while(!nuevo.empty()) {
+            int noPaginas = (nuevo.front().getTamanio() * 10)/5;
+            if(noPaginas%5 == 0) {
+                noPaginas = (noPaginas/10);
+            } else {
+                noPaginas = (noPaginas/10) + 1;
+            }
+            if(pagDis >= noPaginas) {
+                mLibre -= nuevo.front().getTamanio();
+                mUsada += nuevo.front().getTamanio();
+                pagDis -= noPaginas;
+                nuevo.front().setTPaginas(noPaginas);
+                for(int i = 0, tamanio = nuevo.front().getTamanio(), noPag = 0; i < 34 and noPaginas > 0; i++) {
+                    if(m[i].ocupado == false) {
+                        noPaginas--;
+                        noPag++;
+                        m[i].ocupado = true;
+                        m[i].estado = 'L';
+                        m[i].idProceso = nuevo.front().getId();
+                        m[i].noPagina = noPag;
+                        if(tamanio > 5) {
+                            tamanio -= 5;
+                            m[i].tUsado += 5;
+                        } else {
+                            m[i].tUsado += tamanio;
+                            break;
+                        }
+                    }
+                }
+                nuevo.front().setTLlegada(tiempoTotal);
+                listo.push(nuevo.front());
+                nuevo.pop();
+                cout << "\033[2;21H    " << endl;
+                cout << "\033[2;21H" << nuevo.size() << endl;
+                cout << "\033[2;39H    " << endl;
+                cout << "\033[2;54H    " << endl;
+                if(nuevo.empty()) {
+                    cout << "\033[2;39H0    " << endl;
+                    cout << "\033[2;54H0    " << endl;
+                } else {
+                    cout << "\033[2;39H" << nuevo.front().getId() << endl;
+                    cout << "\033[2;54H" << nuevo.front().getTamanio() << endl;
+                }
+                imprimirListos();
+                imprimirMemoria();
+                imprimirMemoriaVirtual();
+                sleep(1);
+            } else {
+                break;
+            }
         }
     }
 }
@@ -313,54 +371,80 @@ void Interfaz::imprimirEjecucion() {
         cout << "\033[" << 6 + i << ";53H                             " << endl;
     }
     /// Código para imprimir el proceso en el FRONT de la cola listos
-    if(!listoSuspendido.empty()) {
-
-    } else {
-        if(!listo.empty()) {
-            if(ejecucion.empty()) {
-                if(listo.front().getTResFlag() == false) {
-                    listo.front().setTRespuesta(tiempoTotal - listo.front().getTLlegada());
-                }
-                ejecucion.push(listo.front());
-                listo.pop();
-                /// Verifica si el nuevo proceso que entrara a ejecucion tiene todas sus páginas en memoria principal
-                if(mPrincipalPaginas(ejecucion.front().getId()) < ejecucion.front().getTPaginas() ) {
-                    /// Verifica que haya espacio en memoria principal
-                    if(pagDis >= mVirtualPaginas(ejecucion.front().getId())) {
-                        /// Busca los espacios disponibles dentro de memoria principal
-                        for(int i = 0; i < 36; i++) {
-                            if(mv[i].idProceso == ejecucion.front().getId()) {
-                                /// Asigna desde la memoria virtual hacia la principal
-                                for(int j = 0; j < 34; j++) {
-                                    if(m[j].ocupado == false) {
-                                        m[j] = mv[i];
-                                        pagDis--;
-                                        mVDis++;
-                                        mUsada += m[j].tUsado;
-                                        mLibre -= m[j].tUsado;
-                                        break;
-                                    }
+    if(!listo.empty()) {
+        if(ejecucion.empty()) {
+            if(listo.front().getTResFlag() == false) {
+                listo.front().setTRespuesta(tiempoTotal - listo.front().getTLlegada());
+            }
+            ejecucion.push(listo.front());
+            listo.pop();
+            /// Verifica si el nuevo proceso que entrara a ejecucion tiene todas sus páginas en memoria principal
+            if(mPrincipalPaginas(ejecucion.front().getId()) < ejecucion.front().getTPaginas() ) {
+                /// Verifica que haya espacio en memoria principal
+                if(pagDis >= mVirtualPaginas(ejecucion.front().getId())) {
+                    /// Busca los espacios disponibles dentro de memoria principal
+                    for(int i = 0; i < 36; i++) {
+                        if(mv[i].idProceso == ejecucion.front().getId()) {
+                            /// Asigna desde la memoria virtual hacia la principal
+                            for(int j = 0; j < 34; j++) {
+                                if(m[j].ocupado == false) {
+                                    m[j] = mv[i];
+                                    pagDis--;
+                                    mUsada += m[j].tUsado;
+                                    mLibre -= m[j].tUsado;
+                                    break;
                                 }
                             }
                         }
-                        liberarMemoriaVirtual(ejecucion.front().getId());
-                        imprimirMemoriaVirtual();
-                    } else {
-                        while(mPrincipalPaginas(ejecucion.front().getId()) < ejecucion.front().getTPaginas()){
-                            /// Libera el último proceso ingresado, poniendolo en Listo - Suspendido
-                            for(unsigned int i = 0; i < listo.size() - 1; i++) {
-                                listo.push(listo.front());
-                                listo.pop();
-                            }
-                            listoSuspendido.push(listo.front());
-                            liberarMemoria(listo.front().getId());
-                            liberarMemoriaVirtual(listo.front().getId());
+                    }
+                    //liberarMemoriaVirtual(ejecucion.front().getId());
+                } else {
+                    while(mPrincipalPaginas(ejecucion.front().getId()) > pagDis){
+                        /// Libera el último proceso ingresado, poniendolo en Listo - Suspendido
+                        for(unsigned int i = 0; i < listo.size() - 1; i++) {
+                            listo.push(listo.front());
                             listo.pop();
                         }
+                        listoSuspendido.push(listo.front());
+                        liberarMemoria(listo.front().getId());
+                        liberarMemoriaVirtual(listo.front().getId());
+                        listo.pop();
                     }
+                    /// Busca los espacios disponibles dentro de memoria principal
+                    for(int i = 0; i < 36; i++) {
+                        if(mv[i].idProceso == ejecucion.front().getId()) {
+                            /// Asigna desde la memoria virtual hacia la principal
+                            for(int j = 0; j < 34; j++) {
+                                if(m[j].ocupado == false) {
+                                    mUsada += m[j].tUsado;
+                                    mLibre -= m[j].tUsado;
+                                    m[j] = mv[i];
+                                    pagDis--;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    //liberarMemoriaVirtual(ejecucion.front().getId());
                 }
-                /// Asigna en memoria los datos para imprimir la ejecución
-                asignarEstado(ejecucion.front().getId(), 'E');
+                liberarMemoriaVirtual(ejecucion.front().getId());
+                imprimirMemoriaVirtual();
+            }
+            /// Asigna en memoria los datos para imprimir la ejecución
+            asignarEstado(ejecucion.front().getId(), 'E');
+            /// Impresión del estado Listo-Suspendido
+            cout << "\033[50;35H    " << endl;
+            cout << "\033[50;35H" << mVDis << endl;
+            cout << "\033[50;94H   " << endl;
+            cout << "\033[50;94H" << listoSuspendido.size() << endl;
+            cout << "\033[50;109H   " << endl;
+            cout << "\033[50;124H   " << endl;
+            if(listoSuspendido.empty()) {
+                cout << "\033[50;109H0" << endl;
+                cout << "\033[50;124H0" << endl;
+            } else {
+                cout << "\033[50;109H" << listoSuspendido.top().getId() << endl;
+                cout << "\033[50;124H" << listoSuspendido.top().getTamanio() << endl;
             }
         }
     }
@@ -371,6 +455,7 @@ void Interfaz::imprimirEjecucion() {
         cout <<"\033[" << 8 << ";54H" << ejecucion.front().getTRestante() << endl;
         cout <<"\033[" << 9 << ";54H" << ejecucion.front().getTTranscurrido() << endl;
     }
+    usleep(10);
 }
 
 void Interfaz::imprimirBloqueados() {
@@ -417,7 +502,7 @@ int Interfaz::procesarDatos() {
             } else if(ch == 85 or ch == 117) {
                 /// TECLA U
                 ingresaMemoriaVirtual(listo);
-
+                ingresaMemoriaVirtual(bloqueado);
                 break;
             } else if(ch == 78 or ch == 110) {
                 nuevoProceso();
@@ -430,6 +515,7 @@ int Interfaz::procesarDatos() {
                     imprimirListos();
                     imprimirBloqueados();
                     imprimirMemoria();
+                    imprimirMemoriaVirtual();
                 }
                 break;
             } else if(ch == 114 or ch == 82) {
@@ -472,7 +558,7 @@ int Interfaz::procesarDatos() {
             } else if(ch == 85 or ch == 117) {
                 /// TECLA U
                 ingresaMemoriaVirtual(listo);
-
+                ingresaMemoriaVirtual(bloqueado);
                 break;
             } else if(ch == 114 or ch == 82) {
                 regresaBloqueado();
@@ -502,12 +588,16 @@ int Interfaz::procesarDatos() {
             } else if(ch == 85 or ch == 117) {
                 /// TECLA U
                 ingresaMemoriaVirtual(listo);
-
+                ingresaMemoriaVirtual(bloqueado);
                 break;
             } else if(ch == 115 or ch == 83) {
                 /// Bloqueado suspendido
                 if(!bloqueado.empty()) {
                     bloqueadoSuspendido();
+                    imprimirListos();
+                    imprimirBloqueados();
+                    imprimirMemoria();
+                    imprimirMemoriaVirtual();
                 }
                 break;
             } else if(ch == 114 or ch == 82) {
@@ -612,6 +702,8 @@ void Interfaz::imprimirTiemposActual() {
     cout << "\033[2;80H" << tiempoTotal << endl;
     cout << "\033[32;94H   " << endl;
     cout << "\033[32;94H" << cSuspendidos << endl;
+    cout << "\033[50;35H    " << endl;
+    cout << "\033[50;35H" << mVDis << endl;
     ///
     ifstream fin("Bloqueado-Suspendido.txt");
     Proceso p;
@@ -663,6 +755,7 @@ void Interfaz::imprimirTiemposActual() {
     imprimirTerminados();
     imprimirBloqueados();
     imprimirMemoria();
+    imprimirMemoriaVirtual();
 }
 
 void Interfaz::datosTiempoActual(queue<Proceso>& q, const string& n, unsigned int &i) {
@@ -741,8 +834,6 @@ void Interfaz::liberarMemoriaVirtual(const int& index) {
     }
 }
 
-
-
 void Interfaz::asignarEstado(const int& index, const char& estado) {
     for(int i = 0; i < 34; i++) {
         if(m[i].idProceso == index) {
@@ -820,7 +911,7 @@ bool Interfaz::checkNumInt(const string& cadena) {
 void Interfaz::bloqueadoSuspendido() {
     ///
     fstream fout("Bloqueado-Suspendido.txt", ios::app);
-    fout << bloqueado.front().toString() << "|" << tiempoTotal << endl;
+    fout << bloqueado.front().toString();
     fout.close();
     liberarMemoria(bloqueado.front().getId());
     bloqueado.pop();
@@ -860,10 +951,8 @@ void Interfaz::bloqueadoSuspendido() {
         getline(fin, str, '|');
         p.setTBloqueo(atoi(str.c_str()));
         getline(fin, str, '|');
-        getline(fin, str, '|');
-        p.setTamanio(atoi(str.c_str()));
         getline(fin, str, '\n');
-        p.setTEspera(p.getTEspera() + (tiempoTotal - atoi(str.c_str())) );
+        p.setTamanio(atoi(str.c_str()));
         cout << "\033[32;109H   " << endl;
         cout << "\033[32;109H" << p.getId() << endl;
         cout << "\033[32;124H   " << endl;
@@ -910,10 +999,8 @@ void Interfaz::regresaBloqueado() {
         getline(fileIn, str, '|');
         p.setTBloqueo(atoi(str.c_str()));
         getline(fileIn, str, '|');
-        getline(fileIn, str, '|');
-        p.setTamanio(atoi(str.c_str()));
         getline(fileIn, str, '\n');
-        p.setTEspera(p.getTEspera() + (tiempoTotal - atoi(str.c_str())) );
+        p.setTamanio(atoi(str.c_str()));
     }
     fileIn.close();
     ///
@@ -982,10 +1069,8 @@ void Interfaz::regresaBloqueado() {
                     getline(fin, str, '|');
                     p.setTBloqueo(atoi(str.c_str()));
                     getline(fin, str, '|');
-                    getline(fin, str, '|');
-                    p.setTamanio(atoi(str.c_str()));
                     getline(fin, str, '\n');
-                    p.setTEspera(p.getTEspera() + (tiempoTotal - atoi(str.c_str())) );
+                    p.setTamanio(atoi(str.c_str()));
                     if(fin.eof()) {
                         break;
                     }
@@ -1008,10 +1093,11 @@ void Interfaz::regresaBloqueado() {
             fout.close();
             remove("Bloqueado-Suspendido.txt");
             rename("temporal.txt", "Bloqueado-Suspendido.txt");
-            if(cSuspendidos > 0) {
+            if(cSuspendidos > 0){
                 cout << "\033[32;94H   " << endl;
                 cout << "\033[32;94H" << --cSuspendidos << endl;
-            } else {
+            }
+            else{
                 cout << "\033[32;94H   " << endl;
                 cout << "\033[32;94H" << cSuspendidos << endl;
             }
@@ -1060,7 +1146,6 @@ void Interfaz::ingresaMemoriaVirtual(queue <Proceso> &q) {
                 }
             }
         }
-
         if(cPag > 1 and mVDis > 0) {
             for(int j = 0; j < 36; j++) {
                 if(mv[j].ocupado == false) {
@@ -1087,6 +1172,8 @@ void Interfaz::ingresaMemoriaVirtual(queue <Proceso> &q) {
 
 void Interfaz::imprimirMemoriaVirtual() {
     //
+    cout << "\033[50;35H    " << endl;
+    cout << "\033[50;35H" << mVDis << endl;
     for(int i = 0; i < 36; i++) {
         cout << "\033[52;" << 14 + (i * 5) << "H   " << endl;
         cout << "\033[52;" << 14 + (i * 5) << "H" << mv[i].idProceso << endl;
